@@ -1,0 +1,58 @@
+Map - A tool for viewing 2D map data using Motlab (a heterogeneous
+collaborative visualization library).
+
+Copyright (C) 2009 Trevor Dodds <trev@comp.leeds.ac.uk>
+
+Map is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+Map is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+Map, in the file named COPYING.  If not, see <http://www.gnu.org/licenses/>.
+
+
+Installation
+------------
+
+Map depends on Motlab and SDL (Simple Direct Media Layer). SDL is a
+cross-platform library used by Map for creating a window and taking keyboard
+input. Motlab uses OpenAL for audio capture and playback.
+
+Map can be built using the CMake Cross-platform make utility -
+http://www.cmake.org/
+
+The linux instructions are as follows:
+
+$ cd build
+$ cmake ../src
+$ make
+
+This will create an executable called 'map'.
+
+Windows users: The application has been tested and compiled using Microsoft
+Visual Studio 2008. First install SDL and follow the instructions for building
+Motlab.
+
+
+Usage
+-----
+
+To run a server, use
+
+$ ./map -s
+
+To run a client, use
+
+$ ./map -i <ip_address>
+
+where <ip_address> is the address of the server.
+
+For a test, you can run two clients on the same machine, and pressing the arrow
+keys will move the data on both clients.
+

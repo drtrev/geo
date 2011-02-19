@@ -1,0 +1,14 @@
+Add const keyword to operator overload param in types
+add const to some of those functions?
+
+remap walls to check for within plane:
+
+normal: find 90 degree from this, this is X (unit vector)
+make corner 1 origin (translate all to corner1)
+work out how many X corners are from corner1 (divide by X)
+do same for collision point and Y.
+
+now you've remapped, see if it's within boundary
+
+
+Deal with hidden walls, size of player (move walls out and add walls for gaps, or check ahead?)
