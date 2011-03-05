@@ -33,12 +33,6 @@ Servercontrol::Servercontrol()
 {
   graphics = NULL;
 
-  graphicsActive = true; // hard code for now
-
-  // TODO put this in init, with graphicsActive as an arg
-  // optionally have graphics, need to include graphicsopengl.h:
-  if (graphicsActive) graphics = new GraphicsOpenGL;
-
   SERV = true;
   keys = 0;
 }
@@ -52,25 +46,23 @@ Servercontrol::~Servercontrol()
   }
 }
 
-void Servercontrol::init(int port, std::string readPath, std::string writePath, std::string mapfile, verboseEnum verbosity, char* ip, bool dontGrab, bool fullscreen, int polygonMax)
+void Servercontrol::init(Args &args)
+// TODO remove int port, std::string readPath, std::string writePath, std::string mapfile, verboseEnum verbosity, char* ip, bool dontGrab, bool fullscreen, int polygonMax)
   // initialisation. ip and dontGrab are for client, here because init is virtual
 {
-  initShared(verbosity, fullscreen, polygonMax);
+  initShared(args.verbosity, args.fullscreen);
 
-  if (graphicsActive) {
+  if (args.graphicsActive) {
+    graphics = new GraphicsOpenGL;
     out << VERBOSE_NORMAL << "Initialising graphics...\n";
-    graphics->init(out, graphics->makeWindowInfo(0, 0, 100, 100, true, true, 60, 24, fullscreen, "Title"),
+    graphics->init(out, graphics->makeWindowInfo(0, 0, 100, 100, true, true, 60, 24, args.fullscreen, "Title"),
           "/usr/share/fonts/bitstream-vera/Vera.ttf", 42);
   }
 
   level.init(out, *graphics);
 
-  for (int i = 0; i < MAX_CLIENTS; i++) {
-    map[i].init(out, *graphics, polygonMax);
-  }
-
   // note number of pending connection requests allowed
-  server.init(out, port, 10, net.getFlagsize(), net.getUnitsize());
+  server.init(out, args.port, 10, net.getFlagsize(), net.getUnitsize());
   server.startListening();
 }
 

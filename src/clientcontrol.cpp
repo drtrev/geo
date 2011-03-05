@@ -35,11 +35,6 @@ Clientcontrol::Clientcontrol()
 
   graphicsActive = true;
 
-  graphicsHide = true;
-
-  // TODO put in init, and pass graphicsActive as an arg
-  if (graphicsActive) graphics = new GraphicsOpenGL;
-
   keys = 0, keysOld = 0;
   SERV = false;
   //input = new InputX11; if use this then delete in gameover
@@ -60,45 +55,46 @@ Clientcontrol::~Clientcontrol()
   }
 }
 
-void Clientcontrol::init(int port, std::string readPath, std::string writePath, std::string mapfile, verboseEnum verbosity, char* ip, bool dontGrab, bool fullscreen, int polygonMax)
+void Clientcontrol::init(Args &args)
+// TODO removeint port, std::string readPath, std::string writePath, std::string mapfile, verboseEnum verbosity, char* ip, bool dontGrab, bool fullscreen, int polygonMax)
 {
-  initShared(verbosity, fullscreen, polygonMax); // init everything shared between client and server
-  out << VERBOSE_NORMAL << "Limiting polygon count to " << polygonMax << '\n';
+  initShared(args.verbosity, args.fullscreen); // init everything shared between client and server
 
-  if (graphicsActive) {
+  if (args.graphicsActive) {
+    graphics = new GraphicsOpenGL;
     out << VERBOSE_NORMAL << "Initialising graphics...\n";
-    graphics->init(out, graphics->makeWindowInfo(0, 0, 100, 100, true, true, 60, 24, fullscreen, "Title"),
+    graphics->init(out, graphics->makeWindowInfo(0, 0, 100, 100, true, true, 60, 24, args.fullscreen, "Title"),
           "/usr/share/fonts/bitstream-vera/Vera.ttf", 42);
   }
 
-  client.init(out, port, net.getFlagsize(), net.getUnitsize());
+  client.init(out, args.port, net.getFlagsize(), net.getUnitsize());
   level.init(out, *graphics);
-  map.init(out, *graphics, polygonMax);
+  //map.init(out, *graphics, polygonMax);
 
-#ifdef _MSC_VER
+/*#ifdef _MSC_VER
   if (mapfile == "") map.load("C:\\temp\\trev\\15152304-MM-topo_00.gml");
   else map.load(mapfile);
 #else
   map.load("/usr/not-backed-up/work/map/15152304-MM-topo_01.gml");
   //map.load("C:\\temp\\trev\\18492304-MM-topo_00.gml"); // ripon
-#endif
+#endif*/
 
-  out << VERBOSE_QUIET << "Using ip address: " << ip << '\n';
+  out << VERBOSE_QUIET << "Using ip address: " << args.ip << '\n';
 
-  if (!client.openConnection(ip)) {
+  if (!client.openConnection(args.ip.c_str())) {
     gameover();
-    std::cerr << "Could not connect to server at address: " << ip << std::endl;
+    std::cerr << "Could not connect to server at address: " << args.ip << std::endl;
     exit(1);
   }
 
-  if (!dontGrab) input.grab();
+  if (!args.dontGrab) input.grab();
 
   // for now just keep these at /tmp
-  readPath = "/tmp";
-  writePath = "/tmp";
+  //readPath = "/tmp";
+  //writePath = "/tmp";
 
-  transfercontrol.setReadPath(readPath);
-  transfercontrol.setWritePath(writePath);
+  //transfercontrol.setReadPath(readPath);
+  //transfercontrol.setWritePath(writePath);
 
   soundDev.initOutput(out);
   talk.initOutput(out);
@@ -165,7 +161,7 @@ void Clientcontrol::go()
     doloop(inputdelay, inputtime, &Clientcontrol::inputloop);
     doloop(networkdelay, networktime, &Clientcontrol::networkloop);
     doloop(physicsdelay, physicstime, &Clientcontrol::physicsloop);
-    doloop(graphicsdelay, graphicstime, &Clientcontrol::graphicsloop);
+    if (graphicsActive) doloop(graphicsdelay, graphicstime, &Clientcontrol::graphicsloop);
     doloop(sounddelay, soundtime, &Clientcontrol::soundloop);
     doloop(transferdelay, transfertime, &Clientcontrol::transferloop);
 

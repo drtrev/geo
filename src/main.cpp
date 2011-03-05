@@ -41,9 +41,8 @@ void catchInterrupt(int sig)
   exit(0);
 }
 
-void processCLAs(int argc, char** argv, string &mapfile, char* ip, verboseEnum &verbosity, bool &dontGrab, bool &fullscreen, bool &SERV, int &polygonMax)
+void processCLAs(int argc, char** argv, Args &args)
 {
-#ifndef _MSC_VER
   struct option options[] = {
     {"dontGrab", no_argument, 0, 'd'},
     {"fullscreen", no_argument, 0, 'f'},
@@ -59,13 +58,13 @@ void processCLAs(int argc, char** argv, string &mapfile, char* ip, verboseEnum &
   int c = 0;
 
   // returns EOF (-1) when reaches end of CLAs
-  while ((c = getopt_long(argc, argv, "dfhi:n:qsv", options, &optionIndex)) != EOF) {
+  while ((c = getopt_long(argc, argv, "dfhi:qsv", options, &optionIndex)) != EOF) {
     switch (c) {
       case 'd': // don't grab keyboard
-        dontGrab = true;
+        args.dontGrab = true;
         break;
       case 'f':
-        fullscreen = true;
+        args.fullscreen = true;
         break;
       case 'h': // help
         cout << "Usage: ./net [options]" << endl;
@@ -79,74 +78,24 @@ void processCLAs(int argc, char** argv, string &mapfile, char* ip, verboseEnum &
         exit(0);
         break;
       case 'i':
-        if (strlen(optarg) + 1 > 50) {
-          cerr << "IP address too long" << endl;
-        }else{
-          memcpy(ip, optarg, strlen(optarg) + 1);
-        }
-        break;
-      case 'n':
-        polygonMax = atoi(optarg);
+        args.ip = optarg;
         break;
       case 'q':
-        if (verbosity == VERBOSE_LOUD) verbosity = VERBOSE_NORMAL; // got v as well
-        else verbosity = VERBOSE_QUIET;
+        if (args.verbosity == VERBOSE_LOUD) args.verbosity = VERBOSE_NORMAL; // got v as well
+        else args.verbosity = VERBOSE_QUIET;
         break;
       case 's':
-        SERV = true; // can't use SERVER cos that's defined in server.h
+        args.serv = true; // can't use SERVER cos that's defined in server.h
         break;
       case 'v':
-        if (verbosity == VERBOSE_QUIET) verbosity = VERBOSE_NORMAL; // got q as well
-        else verbosity = VERBOSE_LOUD;
+        if (args.verbosity == VERBOSE_QUIET) args.verbosity = VERBOSE_NORMAL; // got q as well
+        else args.verbosity = VERBOSE_LOUD;
         break;
       case '?': // error
-        cerr << "For usage instructions use './net -h' or './net --help'" << endl;
+        cerr << "For usage instructions use './geo -h' or './geo --help'" << endl;
         break;
     }
   }
-#else
-
-	if (argc > 1 && !strcmp(argv[1], "-s")) {
-		SERV = true;
-	}
-
-	for (int i = 0; i < argc; i++) {
-		if (!strcmp(argv[i], "-h")) {
-			cout << "Usage: ./map [options]" << endl;
-			cout << "Options:" << endl;
-			cout << "  -f" << endl;
-			cout << "    open in fullscreen mode" << endl;
-			cout << "  -g <filename>" << endl;
-			cout << "    filename for GML file to load" << endl;
-			cout << "  -h" << endl;
-			cout << "    display this help" << endl;
-			cout << "  -i <ipaddress>" << endl;
-			cout << "    ip address of server" << endl;
-			cout << "  -n <integer>" << endl;
-			cout << "    maximum number of polygons to load from GML file" << endl;
-			cout << "  -s" << endl;
-			cout << "    run as server" << endl;
-			exit(0);
-		}
-		if (!strcmp(argv[i], "-f")) {
-			fullscreen = true;
-		}
-		if (!strcmp(argv[i], "-n") && i < argc - 1) {
-			polygonMax = atoi(argv[i+1]);
-		}
-	    if (argc > i + 1 && !strcmp(argv[i], "-i")) {
-	      if (strlen(argv[i+1]) + 1 > 50) {
-            cerr << "IP address too long" << endl;
-          }else{
-            memcpy(ip, argv[i+1], strlen(argv[i+1]) + 1);
-          }
-    	}
-		if (argc > i + 1 && !strcmp(argv[i], "-g")) {
-			mapfile = argv[i+1];
-			cout << "Set GML file as: " << mapfile << endl;
-		}
-	}
-#endif
 
 }
 
@@ -155,28 +104,14 @@ int main(int argc, char** argv)
   signal(SIGINT, &catchInterrupt);
   signal(SIGABRT, &catchInterrupt);
 
-  string mapfile = "";
-  char localhost[50], ip[50];
-  string localstr = "127.0.0.1";
-  strncpy(localhost, localstr.c_str(), localstr.length() + 1);
-  ip[0] = '\0';
-  verboseEnum verbosity = VERBOSE_NORMAL;
-  bool dontGrab = false; // grab keyboard
-  bool fullscreen = false;
-  bool SERV = false;
-  int polygonMax = 100000;
+  Args args;
 
-  processCLAs(argc, argv, mapfile, ip, verbosity, dontGrab, fullscreen, SERV, polygonMax);
-  if (strlen(ip) == 0) memcpy(ip, localhost, strlen(localhost) + 1);
+  processCLAs(argc, argv, args);
 
-  if (!SERV) controller = new Clientcontrol;
+  if (!args.serv) controller = new Clientcontrol;
   else controller = new Servercontrol;
   
-  int port = 3496;
-
-  string readPath = "", writePath = ""; // not used
-
-  controller->init(port, readPath, writePath, mapfile, verbosity, ip, dontGrab, fullscreen, polygonMax);
+  controller->init(args);
   controller->go();
   controller->gameover();
 

@@ -10,18 +10,18 @@ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2 -DNOOGLFT")
 MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 
 INCLUDE_DIRECTORIES( ../include 
-../../../motlab-old/motlab/trunk/include
-../../../../motlab/motlab/trunk/include
+../../motlab-old/motlab/trunk/include
 ../../../motlab/motlab/trunk/include
+../../motlab/motlab/trunk/include
 /usr/not-backed-up/work/oglft-0.9/include/oglft
 /usr/not-backed-up/work/oglft-0.9/bin/include/oglft
 /usr/not-backed-up/work/openal-soft-1.7.411/include 
 /usr/include/freetype2 /usr/local/include/oglft /usr/include/ImageMagick )
 
 LINK_DIRECTORIES( /usr/not-backed-up/work/oglft-0.9/lib
-../../../motlab-old/motlab/trunk/build/lib
-../../../../motlab/motlab/trunk/build/lib
+../../motlab-old/motlab/trunk/build/lib
 ../../../motlab/motlab/trunk/build/lib
+../../motlab/motlab/trunk/build/lib
 /usr/not-backed-up/work/oglft-0.9/bin/lib
 /usr/not-backed-up/work/openal-soft-1.7.411/build/
 /usr/not-backed-up/openal-soft-1.7.411/build/ /usr/local/lib )

@@ -1,24 +1,23 @@
-/* This file is part of Map - A tool for viewing 2D map data using Motlab (a
- * heterogeneous collaborative visualization library).
+/* This file is part of Geo
  *
- * Copyright (C) 2009 Trevor Dodds <trev@comp.leeds.ac.uk>
+ * Copyright (C) 2011 Trevor Dodds <trev.dodds@gmail.com>
  *
- * Map is free software: you can redistribute it and/or modify it under the
+ * Geo is free software: you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  * 
- * Map is distributed in the hope that it will be useful, but WITHOUT ANY
+ * Geo is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
  * 
  * You should have received a copy of the GNU General Public License along with
- * Map.  If not, see <http://www.gnu.org/licenses/>.
+ * Geo.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CURSES
-#define CURSES
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
 
 #include <cmath>
 #include <iostream>
@@ -29,12 +28,25 @@
 #include "motlab/net.h"
 #include "motlab/network.h"
 #include "motlab/transfercontrol.h"
+#include <string>
 
 #ifdef _MSC_VER
   inline double round(double x) { return floor(x + 0.5); }
 #endif
 
 class Client; class Graphics; class Player; class Server;
+
+struct Args {
+  int port;
+  verboseEnum verbosity;
+  std::string ip;
+  bool dontGrab;
+  bool fullscreen;
+  bool graphicsActive;
+  bool serv;
+
+  Args() : port(3496), verbosity(VERBOSE_NORMAL), ip("127.0.0.1"), dontGrab(false), fullscreen(false), graphicsActive(true), serv(false) {}
+};
 
 /**
  * Controller class.
@@ -71,10 +83,10 @@ class Controller {
     void gameoverShared(); /**< Kill everything that's shared by client and server. */
     virtual void gameover() = 0; /**< Kill everything that's relevant to only Client or Server. \see Clientcontrol \see Servercontrol */
 
-    void initShared(verboseEnum, bool, int); /**< Initialise everything that's relevant to client and server. */
+    void initShared(verboseEnum, bool); /**< Initialise everything that's relevant to client and server. */
 
     /**
-     * Initialise everything.
+     * Initialise everything. TODO change docs
      *
      * \param port the port number to use for listening or connecting to the server.
      * \param readPath the path to read files from (when using Motlab's transfer
@@ -89,7 +101,7 @@ class Controller {
      * \param polygonMax specify maximum number of polygons to read from
      * datafile (not used in this example).
      */
-    virtual void init(int port, std::string readPath, std::string writePath, std::string mapfile, verboseEnum verbosity, char* ip, bool dontGrab, bool fullscreen, int polygonMax) = 0;
+    virtual void init(Args &args) = 0;
 
 };
 

@@ -67,7 +67,7 @@ class Servercontrol : public Controller {
      * \param fullscreen run in fullscreen mode.
      * \param polygonMax the maximum number of polygons to load.
      */
-    void init(int port, std::string readPath, std::string writePath, std::string mapfile, verboseEnum verbosity, char* ip, bool dontGrab, bool fullscreen, int polygonMax);
+    void init(Args &args);
     void gameover(); /**< End everything. */
 
     void go(); /**< Main loop. Call input, network and physics loops. */

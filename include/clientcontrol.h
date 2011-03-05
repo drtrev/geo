@@ -83,7 +83,7 @@ class Clientcontrol : public Controller {
      * \param polygonMax specify maximum number of polygons to read from
      * datafile (not used in this example).
      */
-    void init(int port, std::string readPath, std::string writePath, std::string mapfile, verboseEnum verbosity, char* ip, bool dontGrab, bool fullscreen, int polygonMax);
+    void init(Args &args);
     void gameover(); /**< Close connection to server, stop capturing audio, release keyboard (if grabbed), end output, kill graphics, and say "Bye bye!". */
 
     void go(); /**< Run through the various control loops at set frequencies. */

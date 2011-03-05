@@ -20,7 +20,6 @@
  */
 
 #include "controller.h"
-#include "graphics.h"
 #include "motlab/talk.h"
 #include "player.h"
 
@@ -63,7 +62,7 @@ void Controller::gameoverShared()
   cout << "Bye bye!" << endl;
 }
 
-void Controller::initShared(verboseEnum verbosity, bool fullscreen, int polygonMax)
+void Controller::initShared(verboseEnum verbosity, bool fullscreen)
   // initialisation that's the same for client and server
 {
   out.setVerbosity(verbosity);
@@ -71,19 +70,11 @@ void Controller::initShared(verboseEnum verbosity, bool fullscreen, int polygonM
 
   out.setCursor(0);
 
-  /*if (!SERV) { // now doing this in client and server, because for server it's optional
-    out << VERBOSE_LOUD << "Initialising graphics...\n";
-    graphics->init(out, graphics->makeWindowInfo(0, 0, 100, 100, true, true, 60, 24, fullscreen, "Title"),
-          "/usr/share/fonts/bitstream-vera/Vera.ttf", 42);
-  }*/
+  transfercontrol.init(out); // TODO remove?
 
-  transfercontrol.init(out);
-
-  // network
+  // network TODO tidy
   net.init(out);// flagsize, unitsize, MAX_CLIENTS);
   Talk talk; // just for getting chunk bytes
   net.setAudioDataSize(talk.getChunkBytes()); // TODO when use UDP remove this
-
-  //level.init(out, *graphics); now done in client/server, cos server is optional
 }
 
