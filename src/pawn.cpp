@@ -92,7 +92,7 @@ void Pawn::input(int in, double sync)
   float cosRadY = cos(radY);
   v2.x = v.x * cosRadY - v.z * sinRadY;
   v2.y = v.y;
-  v2.z = v.z * sinRadY + v.z * cosRadY;
+  v2.z = v.x * sinRadY + v.z * cosRadY;
   props.accel += v2;
 
   /*if (in & KEYS_RIGHT) props.accel.x += amount;

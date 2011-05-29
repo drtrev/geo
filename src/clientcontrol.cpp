@@ -44,6 +44,7 @@ Clientcontrol::Clientcontrol()
   }
 
   myId = -1;
+  graphicsHide = false; // TODO make CLA
 }
 
 Clientcontrol::~Clientcontrol()
