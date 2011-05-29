@@ -28,6 +28,7 @@ http://www.cmake.org/
 
 The linux instructions are as follows:
 
+$ mkdir build
 $ cd build
 $ cmake ../src
 $ make
