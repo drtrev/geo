@@ -239,10 +239,10 @@ void Clientcontrol::inputloop()
   }
 
   // auto slope test
-  static int rotDir = 1;
-  if (rand() % 10 == 0) rotDir = -rotDir;
-  geo::Vector rot(0, 0, rotDir);
-  if (myId > -1 && myId < players) player[myId].turn(rot);
+  //static int rotDir = 1;
+  //if (rand() % 10 == 0) rotDir = -rotDir;
+  //geo::Vector rot(0, 0, rotDir);
+  //if (myId > -1 && myId < players) player[myId].turn(rot);
 
 }
 
@@ -299,6 +299,10 @@ void Clientcontrol::process(Unit unit)
       }else if (unit.position.id > 99 && unit.position.id < players+100) {
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
         player[unit.position.id - 100].setRot(rot);
+      }else if (unit.position.id == 200) {
+        // create block
+        geo::Vector pos(unit.position.x, unit.position.y, unit.position.z);
+        level.createBlock(pos);
       }else out << VERBOSE_LOUD << "Error with position ID - out of range: " << unit.position.id << "\n";
 
       // temporary output to see what's going on

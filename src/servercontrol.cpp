@@ -278,6 +278,17 @@ void Servercontrol::physicsloop()
   for (int i = 0; i < users; i++) {
     player[i].input(keyset[i], sync);
     player[i].move(level, sync);
+    if (keyset[i] & KEYS_CONSTRUCT) {
+      if (level.createBlock(player[i].getPos())) {
+        Unit unit;
+        unit.flag = UNIT_POSITION;
+        unit.position.id = 200; // create
+        unit.position.x = player[i].getPos().x;
+        unit.position.y = player[i].getPos().y;
+        unit.position.z = player[i].getPos().z;
+        net.addUnitAll(unit, server, -1);
+      }
+    }
 
     //picturecontrol.input(keyset[i], net, server); // pass input for each player
 

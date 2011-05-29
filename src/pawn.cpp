@@ -94,7 +94,7 @@ void Pawn::input(int in, double sync)
   // TODO make rotation function, or steal from OpenGL
   // rotate around y
   v.rotY(rad(props.rot.y)); // rotation is applied locally and sent
-  v.rotZ(rad(props.rot.z));
+  v.rotZ(rad(props.rot.z)); // for fun
   /*geo::Vector v2;
   float radY = props.rot.y / 180.0 * 3.14159;
   float sinRadY = sin(radY);

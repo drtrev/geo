@@ -88,6 +88,8 @@ class Level : public Pawn {
     void fillArray(LevelNames::BlockArray*, int depth);
     void freeArray(LevelNames::BlockArray*);
 
+    bool createBlock(geo::Vector playerPos);
+
     void draw(geo::Vector playerpos, geo::Vector playerrot); /**< Render the map. \param thumb set to true if this is the thumbnail view, false otherwise. */
 
     int checkCollision(Props &props);

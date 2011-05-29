@@ -81,19 +81,20 @@ void Level::fillArray(BlockArray* blocks, int depth)
       for (int k = 0; k < BLOCKARRAY_DEPTH; ++k) {
 
         block = &blocks->b[i][j][k];
-        block->state = rand() % 20;
+        block->state = rand() % 40;
 
         // hack floor
         if (j == 0) block->state = BLOCK_SOLID;
-
-        if (block->state == BLOCK_CHILDREN) {
-          if (depth < maxdepth) {
-            block->children = new BlockArray;
-            testallocs++;
-            fillArray(block->children, depth + 1);
-          }else{
-            block->state = BLOCK_SOLID;
-          }
+        else{
+          if (block->state == BLOCK_CHILDREN) {
+            if (depth < maxdepth) {
+              block->children = new BlockArray;
+              testallocs++;
+              fillArray(block->children, depth + 1);
+            }else{
+              block->state = BLOCK_SOLID;
+            }
+          }else block->state = BLOCK_EMPTY;
         }
 
       }
@@ -123,6 +124,81 @@ void Level::freeArray(BlockArray* blocks)
 
   delete blocks;
   testfree++;
+}
+
+bool Level::createBlock(Vector worldPos)
+// round of player position and put a block there if poss
+{
+  // find block we're in
+  // top level
+
+  std::vector <Wall> walls;
+  Vector blockpos;
+  
+  blockpos = worldPos / 10;
+
+  BlockArray* blocks = top;
+
+  int x, y, z;
+  x = (int) blockpos.x, y = (int) blockpos.y, z = (int) blockpos.z;
+
+  if (x < 0 || y < 0 || z < 0 ||
+      x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
+      z >= BLOCKARRAY_DEPTH)
+  {
+    //cerr << "creation out of bounds!" << endl;
+  }else{
+    if (blocks->b[x][y][z].state == BLOCK_EMPTY) {
+      // create a child
+      blocks->b[x][y][z].children = new BlockArray;
+      testallocs++;
+      blocks->b[x][y][z].state = BLOCK_CHILDREN;
+    }
+    if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
+
+      bool output = false;
+      //if (rand()%50 < 2) output = true;
+
+      // transform original x y and z to children's block coords
+      //Vector torigin = parentorigin;
+      //torigin.x += x * scale;
+      //torigin.y += y * scale;
+      //torigin.z += z * scale;
+
+      float scale = 10.0;
+      Vector tpos;
+      tpos.x = worldPos.x - x * scale;
+      tpos.y = worldPos.y - y * scale;
+      tpos.z = worldPos.z - z * scale;
+      scale /= 10.0;
+      Vector blockpos = tpos / scale;
+
+      int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
+      tx = (int) blockpos.x, ty = (int) blockpos.y, tz = (int) blockpos.z;
+
+      if (output) cout << "tx: " << tx << ", ty: " << ty << ", tz: " << tz << endl;
+
+      // now we've got the transformed coords,
+      // are they actually within this big block?
+      // if not then it'll be detected as out of bounds
+
+      BlockArray* b2 = blocks->b[x][y][z].children;
+
+      if (tx < 0 || ty < 0 || tz < 0
+        || tx > BLOCKARRAY_WIDTH || ty > BLOCKARRAY_HEIGHT || tz > BLOCKARRAY_DEPTH) {
+        cerr << "Creation of subblocks out of bounds" << endl;
+      }else{
+        if (b2->b[tx][ty][tz].state == BLOCK_EMPTY) {
+          b2->b[tx][ty][tz].state = BLOCK_SOLID;
+          return true; // created
+        }
+      }
+
+    }
+
+  }
+
+  return false; // not created
 }
 
 void Level::draw(Vector playerpos, Vector playerrot)
