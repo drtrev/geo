@@ -131,10 +131,12 @@ void Level::draw(Vector playerpos, Vector playerrot)
   graphics->drawLevel(top, props.pos, playerpos, playerrot, collisionWalls);
 }
 
-void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale)
+void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, float pawnRadius)
 {
   float half = scale / 2.0;
   blockpos += half;
+
+  half += pawnRadius; // expand walls by the radius of the object we're checking against
 
   // front
   Wall wall;
@@ -248,7 +250,7 @@ void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentori
       wallpos.x = x * scale; wallpos.y = y * scale; wallpos.z = z * scale;
       wallpos += parentorigin;
       // TODO optimise this so it adds one long wall when blocks are adjacent
-      addWalls(walls, wallpos, scale);
+      addWalls(walls, wallpos, scale, 0.5); // for now just hard coding pawn radius
     }
 
     if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {

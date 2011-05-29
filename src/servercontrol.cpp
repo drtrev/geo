@@ -183,7 +183,7 @@ void Servercontrol::process(Unit unit)
       if (unit.position.id > 99 && unit.position.id < players + 100) {
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
         player[unit.position.id - 100].setRot(rot);
-        std::cout << "Set player rot to: " << player[0].getRot() << std::endl;
+        //std::cout << "Set player rot to: " << player[0].getRot() << std::endl;
       }
       break;
     case UNIT_TRANSFER:
