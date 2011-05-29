@@ -48,6 +48,7 @@ using std::vector;*/
 Player::Player()
 {
   props.pos.x = 5; props.pos.y = 12; props.pos.z = 5;
+  props.power = 2000;
 }
 
 Player::~Player()

@@ -76,6 +76,23 @@ int InputSDL::map(SDLKey sym, bool keydown)
   return key;
 }
 
+int InputSDL::mapMouse(Uint8 button, bool keydown)
+{
+  int key = 0;
+
+  switch (button)
+  {
+    case SDL_BUTTON_MIDDLE:
+      key = KEYS_JUMP;
+      //std::cout << "Jump" << std::endl;
+      break;
+    default:
+      break;
+  }
+
+  return key;
+}
+
 int InputSDL::check(int keys, int &mousexrel, int &mouseyrel, int windowWidth, int windowHeight)
 {
   int key = 0;
@@ -97,6 +114,14 @@ int InputSDL::check(int keys, int &mousexrel, int &mouseyrel, int windowWidth, i
         break;
       case SDL_KEYUP:
         key = map(event.key.keysym.sym, false);
+        keys &= ~key;
+        break;
+      case SDL_MOUSEBUTTONDOWN:
+        key = mapMouse(event.button.button, true);
+        keys |= key;
+        break;
+      case SDL_MOUSEBUTTONUP:
+        key = mapMouse(event.button.button, false);
         keys &= ~key;
         break;
       case SDL_VIDEORESIZE:

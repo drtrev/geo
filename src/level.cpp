@@ -127,7 +127,6 @@ void Level::freeArray(BlockArray* blocks)
 
 void Level::draw(Vector playerpos, Vector playerrot)
 {
-  if (rand() % 50 == 0) cout << "player rot: " << playerrot << '\n';
   graphics->drawLevel(top, props.pos, playerpos, playerrot, collisionWalls);
 }
 
@@ -236,7 +235,7 @@ void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, fl
   walls.push_back(wall);
 }
 
-void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale)
+void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, float pawnRadius)
 {
   if (x < 0 || y < 0 || z < 0 ||
       x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
@@ -250,7 +249,7 @@ void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentori
       wallpos.x = x * scale; wallpos.y = y * scale; wallpos.z = z * scale;
       wallpos += parentorigin;
       // TODO optimise this so it adds one long wall when blocks are adjacent
-      addWalls(walls, wallpos, scale, 0.5); // for now just hard coding pawn radius
+      addWalls(walls, wallpos, scale, pawnRadius);
     }
 
     if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
@@ -288,7 +287,7 @@ void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentori
       for (int checkz = tz - 1; checkz < tz + 2; checkz++)
         for (int checky = ty - 1; checky < ty + 2; checky++)
           for (int checkx = tx - 1; checkx < tx + 2; checkx++)
-            getWalls(walls, origpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale);
+            getWalls(walls, origpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
 
     }
 
@@ -320,7 +319,7 @@ std::vector <Wall> Level::getWalls(Props &props)
   for (int checkz = z - 1; checkz < z + 2; checkz++)
     for (int checky = y - 1; checky < y + 2; checky++)
       for (int checkx = x - 1; checkx < x + 2; checkx++)
-        getWalls(walls, props.pos, origin, checkx, checky, checkz, top, 10);
+        getWalls(walls, props.pos, origin, checkx, checky, checkz, top, 10, props.radius);
 
   return walls;
 }

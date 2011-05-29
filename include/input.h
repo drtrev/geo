@@ -35,6 +35,7 @@
 #define KEYS_BACK     0x0100
 #define KEYS_FORWARD  0x0200
 #define KEYS_BACKWARD 0x0400
+#define KEYS_JUMP     0x0800
 
 /**
  * The input class.

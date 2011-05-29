@@ -75,7 +75,7 @@ class Level : public Pawn {
   protected:
     void addWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float scale, float pawnRadius);
     void getWalls(std::vector <LevelNames::Wall> &walls, geo::Vector origpos, geo::Vector parentorigin, int x, int y, int z,
-                  LevelNames::BlockArray *blocks, float scale);
+                  LevelNames::BlockArray *blocks, float scale, float pawnRadius);
     std::vector <LevelNames::Wall> getWalls(Props &props);
 
     bool checkHitPlane(LevelNames::CollisionInfo col, geo::Vector &collisionPoint, float &collisionDistance,

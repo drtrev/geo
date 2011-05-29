@@ -21,9 +21,9 @@ class Pawn {
 
       geo::Vector rot; // rotation
 
-      float power, friction, minSpeed;
+      float power, friction, minSpeed, radius;
 
-      Props() : power(8000), friction(1400), minSpeed(0.001) {}
+      Props() : power(8000), friction(1400), minSpeed(0.001), radius(0.4) {}
     };
 
     Props props; // pawn properties

@@ -83,7 +83,7 @@ void Pawn::input(int in, double sync)
   if (in & KEYS_LEFT) v.x -= amount;
   if (in & KEYS_FORWARD) v.z -= amount;
   if (in & KEYS_BACKWARD) v.z += amount;
-  if (in & KEYS_UP) v.y += amount;
+  if (in & KEYS_UP || in & KEYS_JUMP) v.y += amount;
   if (in & KEYS_DOWN) v.y -= amount;
   //std::cout << "amount: " << amount << std::endl;
   //v.y -= 9.8 * sync; // actually friction is way too high

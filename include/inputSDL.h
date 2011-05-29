@@ -33,6 +33,7 @@
 class InputSDL : public Input {
   private:
     int map(SDLKey, bool keydown); /**< Map SDL key to our key (defined in input.h) */
+    int mapMouse(Uint8, bool keydown); /**< Map SDL key to our key (defined in input.h) */
 
   public:
     void grab(); /**< Grab keyboard (just set grabbed to true in this case). */
