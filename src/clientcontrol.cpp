@@ -377,7 +377,7 @@ void Clientcontrol::graphicsloop()
   if (!graphicsHide && myId > -1 && myId < players) {
 
     graphics->drawStart();
-    map.draw(false); // TODO remove
+    //map.draw(false); // TODO remove
     level.draw(player[myId].getPos(), player[myId].getRot());
 
     //for (int i = 0; i < users; i++) user[i].draw();
