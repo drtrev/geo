@@ -238,6 +238,12 @@ void Clientcontrol::inputloop()
     if (myId > -1 && myId < players) player[myId].turn(rot);
   }
 
+  // auto slope test
+  static int rotDir = 1;
+  if (rand() % 10 == 0) rotDir = -rotDir;
+  geo::Vector rot(0, 0, rotDir);
+  if (myId > -1 && myId < players) player[myId].turn(rot);
+
 }
 
 void Clientcontrol::process(Unit unit)

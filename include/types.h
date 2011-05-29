@@ -1,6 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <cmath>
 #include <ostream>
 
 namespace geo {
@@ -117,6 +118,39 @@ struct Vector {
     return false;
   }
 
+  Vector& rotX(float radians)
+  {
+    float cosAngle = cos(radians), sinAngle = sin(radians);
+    Vector n;
+    n.x = x;
+    n.y = cosAngle * y + sinAngle * z;
+    n.z = -sinAngle * y + cosAngle * z;
+
+    return *this = n;
+  }
+
+  Vector& rotY(float radians)
+  {
+    float cosAngle = cos(radians), sinAngle = sin(radians);
+    Vector n;
+    n.x = cosAngle * x -sinAngle * z;
+    n.y = y;
+    n.z = sinAngle * x + cosAngle * z;
+
+    return *this = n;
+  }
+
+  Vector& rotZ(float radians)
+  {
+    float cosAngle = cos(radians), sinAngle = sin(radians);
+    Vector n;
+    n.x = cosAngle * x + sinAngle * y;
+    n.y = -sinAngle * x + cosAngle * y;
+    n.z = z;
+
+    return *this = n;
+  }
+
   //declaring this as a friend gives access to private members,
   //which is not needed in a struct (all public)
   //friend ostream& operator<<(ostream &os, Vector &v);
@@ -143,6 +177,13 @@ inline std::ostream& operator<<(std::ostream &os, const Vector &v)
 {
   os << "x: " << v.x << ", y: " << v.y << ", z: " << v.z;
   return os;
+}
+
+const double PI = 3.14159265;
+
+inline float rad(float f)
+{
+  return f / 180.0 * PI;
 }
 
 struct Plane {

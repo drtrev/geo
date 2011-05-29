@@ -98,6 +98,7 @@ class GraphicsOpenGL : public Graphics {
     // doxygen comments from graphics.h are used here automatically
     bool init(Outverbose &o, WindowInfo w, const char* font, int fontsize);
     void setupLights();
+    void setLightPositions();
     void kill();
 
     void drawStart();

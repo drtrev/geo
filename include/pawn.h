@@ -23,7 +23,7 @@ class Pawn {
 
       float power, friction, minSpeed, radius;
 
-      Props() : power(8000), friction(1400), minSpeed(0.001), radius(0.4) {}
+      Props() : power(8000), friction(1400), minSpeed(0.001), radius(0.3) {}
     };
 
     Props props; // pawn properties

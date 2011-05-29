@@ -46,7 +46,7 @@ using std::endl;
 GraphicsOpenGL::GraphicsOpenGL()
 {
   frustum.nearb = 0.1;
-  frustum.farb = 1000;
+  frustum.farb = 100;
   frustum.topb = 10; // calculate properly when window is opened in init
   frustum.rightb = 10;
 
@@ -121,10 +121,15 @@ void GraphicsOpenGL::setupLights()
   float ambient[4] = { .8, .8, .8, 1 };
   float diffuse[4] = { .8, .8, .8, 1 };
   float specular[4] = { 0, 0, 0, 1 };
-  float pos[4] = { -0.4, 1, 0.7, 0 }; // directional, w = 0
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
   glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+  setLightPositions();
+}
+
+void GraphicsOpenGL::setLightPositions()
+{
+  float pos[4] = { -0.4, 1, 0.7, 0 }; // directional, w = 0
   glLightfv(GL_LIGHT0, GL_POSITION, pos);
 }
 
@@ -521,6 +526,9 @@ void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& leve
   glRotatef(playerrot.y, 0, 1, 0);
   glRotatef(playerrot.z, 0, 0, 1);
   glTranslatef(levelpos.x - playerpos.x, levelpos.y - playerpos.y, levelpos.z - playerpos.z);
+
+  setLightPositions();
+
   // top level, 10m x 10m blocks
   float scale = 10;
   drawBlocks(blocks, scale);

@@ -21,7 +21,7 @@
 
 #include "input.h"
 #include "level.h"
-#include "math.h"
+#include "math.h" // TODO cmath or nothing?
 #include "pawn.h"
 //#ifdef _MSC_VER
 //#include <regex.hpp>
@@ -49,6 +49,8 @@ using std::string;
 using std::cerr;
 using std::endl;
 using std::vector;*/
+
+using geo::rad;
 
 Pawn::Pawn()
 {
@@ -91,14 +93,17 @@ void Pawn::input(int in, double sync)
 
   // TODO make rotation function, or steal from OpenGL
   // rotate around y
-  geo::Vector v2;
+  v.rotY(rad(props.rot.y)); // rotation is applied locally and sent
+  v.rotZ(rad(props.rot.z));
+  /*geo::Vector v2;
   float radY = props.rot.y / 180.0 * 3.14159;
   float sinRadY = sin(radY);
   float cosRadY = cos(radY);
   v2.x = v.x * cosRadY - v.z * sinRadY;
   v2.y = v.y;
   v2.z = v.x * sinRadY + v.z * cosRadY;
-  props.accel += v2;
+  props.accel += v2;*/
+  props.accel += v;
 
   /*if (in & KEYS_RIGHT) props.accel.x += amount;
   if (in & KEYS_LEFT) props.accel.x -= amount;
