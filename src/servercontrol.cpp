@@ -296,6 +296,11 @@ void Servercontrol::physicsloop()
     keyset[i] &= ~(KEYS_NEXT | KEYS_BACK);
   }
 
+  // for fun
+  // would need to transmit this
+  //geo::Vector rot(0, 0, 1);
+  //level.turn(rot);
+
   //picturecontrol.go(sync); // should do transmission in own loop, like sound loop in client
 }
 

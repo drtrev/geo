@@ -518,13 +518,14 @@ void GraphicsOpenGL::drawWall(LevelNames::Wall& wall)
   glPopMatrix();
 }
 
-void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& levelpos, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls)
+void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls)
 {
   glPushMatrix();
 
-  glRotatef(playerrot.x, 1, 0, 0);
-  glRotatef(playerrot.y, 0, 1, 0);
-  glRotatef(playerrot.z, 0, 0, 1);
+  glRotatef(playerrot.x + levelrot.x, 1, 0, 0);
+  glRotatef(playerrot.y + levelrot.y, 0, 1, 0);
+  glRotatef(playerrot.z + levelrot.z, 0, 0, 1);
+  cout << "levelrot.z: " << levelrot.z << endl;
   glTranslatef(levelpos.x - playerpos.x, levelpos.y - playerpos.y, levelpos.z - playerpos.z);
 
   setLightPositions();

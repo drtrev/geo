@@ -194,7 +194,7 @@ class Graphics {
      */
     virtual void drawMap(std::vector < std::vector < std::vector <double> > > &linestrip, std::vector < MapPolygon > &polygon, double scale, double offsetX, double offsetY) = 0;
 
-    virtual void drawLevel(LevelNames::BlockArray*, geo::Vector& levelpos, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls) = 0;
+    virtual void drawLevel(LevelNames::BlockArray*, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls) = 0;
 
     /**
      * Render some text. \param g the graphics information for rendering the

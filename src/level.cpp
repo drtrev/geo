@@ -203,7 +203,7 @@ bool Level::createBlock(Vector worldPos)
 
 void Level::draw(Vector playerpos, Vector playerrot)
 {
-  graphics->drawLevel(top, props.pos, playerpos, playerrot, collisionWalls);
+  graphics->drawLevel(top, props.pos, props.rot, playerpos, playerrot, collisionWalls);
 }
 
 void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, float pawnRadius)
