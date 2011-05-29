@@ -29,6 +29,8 @@
 //#include <boost/regex.hpp>
 //#endif
 
+#include<iostream>
+
 /*#include <cmath>
 #include <fstream>
 #include "graphics.h"
@@ -83,6 +85,9 @@ void Pawn::input(int in, double sync)
   if (in & KEYS_BACKWARD) v.z += amount;
   if (in & KEYS_UP) v.y += amount;
   if (in & KEYS_DOWN) v.y -= amount;
+  //std::cout << "amount: " << amount << std::endl;
+  //v.y -= 9.8 * sync; // actually friction is way too high
+  v.y -= 1000 * sync;
 
   // TODO make rotation function, or steal from OpenGL
   // rotate around y

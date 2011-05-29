@@ -83,6 +83,9 @@ void Level::fillArray(BlockArray* blocks, int depth)
         block = &blocks->b[i][j][k];
         block->state = rand() % 20;
 
+        // hack floor
+        if (j == 0) block->state = BLOCK_SOLID;
+
         if (block->state == BLOCK_CHILDREN) {
           if (depth < maxdepth) {
             block->children = new BlockArray;
@@ -492,6 +495,8 @@ int Level::checkCollision(Props &props)
   Vector collisionPoint;
   float collisionDistance;
 
+  // TODO go through all walls, find nearest collisionDistance, move based on that wall
+  // then repeat a few times
   for (unsigned int i = 0; i < walls.size(); i++) {
     col.plane.point = walls[i].corner1;
     col.plane.normal = walls[i].normal;
@@ -501,7 +506,7 @@ int Level::checkCollision(Props &props)
     if (hit) {
       // is it going against the normal? check > PI/2
       if ( acos( move.dot(walls[i].normal) ) > 1.56) {
-        cout << "hit!" << endl;
+        //cout << "hit!" << endl;
         numHit++;
 
         // go from new position to the wall (along the normal) to find

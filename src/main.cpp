@@ -48,6 +48,7 @@ void processCLAs(int argc, char** argv, Args &args)
     {"fullscreen", no_argument, 0, 'f'},
     {"help", no_argument, 0, 'h'},
     {"ipaddress", required_argument, 0, 'i'},
+    {"nowindow", no_argument, 0, 'n'},
     {"quiet", no_argument, 0, 'q'},
     {"server", no_argument, 0, 's'},
     {"verbose", no_argument, 0, 'v'},
@@ -58,7 +59,7 @@ void processCLAs(int argc, char** argv, Args &args)
   int c = 0;
 
   // returns EOF (-1) when reaches end of CLAs
-  while ((c = getopt_long(argc, argv, "dfhi:qsv", options, &optionIndex)) != EOF) {
+  while ((c = getopt_long(argc, argv, "dfhi:nqsv", options, &optionIndex)) != EOF) {
     switch (c) {
       case 'd': // don't grab keyboard
         args.dontGrab = true;
@@ -79,6 +80,9 @@ void processCLAs(int argc, char** argv, Args &args)
         break;
       case 'i':
         args.ip = optarg;
+        break;
+      case 'n':
+        args.graphicsActive = false;
         break;
       case 'q':
         if (args.verbosity == VERBOSE_LOUD) args.verbosity = VERBOSE_NORMAL; // got v as well

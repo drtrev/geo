@@ -53,11 +53,12 @@ void Servercontrol::init(Args &args)
   initShared(args.verbosity, args.fullscreen);
 
   if (args.graphicsActive) {
+    graphicsActive = true;
     graphics = new GraphicsOpenGL;
     out << VERBOSE_NORMAL << "Initialising graphics...\n";
     graphics->init(out, graphics->makeWindowInfo(0, 0, 100, 100, true, true, 60, 24, args.fullscreen, "Title"),
           "/usr/share/fonts/bitstream-vera/Vera.ttf", 42);
-  }
+  }else graphicsActive = false;
 
   level.init(out, *graphics);
 

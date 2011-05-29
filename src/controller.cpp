@@ -32,6 +32,8 @@ Controller::Controller()
 {
   //graphics = new GraphicsOpenGL();
 
+  graphicsActive = true; // will be set from args
+
   SERV = false;
 
   //flagsize = 2; // number of bytes for flag

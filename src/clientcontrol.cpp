@@ -33,8 +33,6 @@ Clientcontrol::Clientcontrol()
 {
   graphics = NULL;
 
-  graphicsActive = true;
-
   keys = 0, keysOld = 0;
   SERV = false;
   //input = new InputX11; if use this then delete in gameover
@@ -45,6 +43,10 @@ Clientcontrol::Clientcontrol()
 
   myId = -1;
   graphicsHide = false; // TODO make CLA
+  // graphicsHide and graphicsActive:
+  // graphicsActive = there's a window, can take input etc.
+  // then can set graphicsHide to true to not draw (e.g. only view in server)
+  // graphicsActive = false means no window or graphics at all
 }
 
 Clientcontrol::~Clientcontrol()
@@ -62,11 +64,12 @@ void Clientcontrol::init(Args &args)
   initShared(args.verbosity, args.fullscreen); // init everything shared between client and server
 
   if (args.graphicsActive) {
+    graphicsActive = true;
     graphics = new GraphicsOpenGL;
     out << VERBOSE_NORMAL << "Initialising graphics...\n";
     graphics->init(out, graphics->makeWindowInfo(0, 0, 100, 100, true, true, 60, 24, args.fullscreen, "Title"),
           "/usr/share/fonts/bitstream-vera/Vera.ttf", 42);
-  }
+  }else graphicsActive = false;
 
   client.init(out, args.port, net.getFlagsize(), net.getUnitsize());
   level.init(out, *graphics);
