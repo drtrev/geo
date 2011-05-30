@@ -11,4 +11,5 @@ do same for collision point and Y.
 now you've remapped, see if it's within boundary
 
 
-Deal with hidden walls, size of player (move walls out and add walls for gaps, or check ahead?)
+
+make sloped walls for small blocks, but have them inside block itelf, overlapping. only check for walls (getWalls) for 3x3 blocks, not 4x4 (was changed temp, see level TODO)
