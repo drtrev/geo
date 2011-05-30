@@ -525,7 +525,7 @@ void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& leve
   glRotatef(playerrot.x + levelrot.x, 1, 0, 0);
   glRotatef(playerrot.y + levelrot.y, 0, 1, 0);
   glRotatef(playerrot.z + levelrot.z, 0, 0, 1);
-  cout << "levelrot.z: " << levelrot.z << endl;
+  //if (rand() % 10) cout << "levelrot.z: " << levelrot.z << endl;
   glTranslatef(levelpos.x - playerpos.x, levelpos.y - playerpos.y, levelpos.z - playerpos.z);
 
   setLightPositions();

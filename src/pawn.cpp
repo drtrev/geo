@@ -72,7 +72,7 @@ void Pawn::init(Outverbose &o, Graphics &g)
   //graphics->drawBlocks(blocks, x, y, zoom);
 }*/
 
-void Pawn::input(int in, double sync)
+void Pawn::input(int in, geo::Vector levelrot, double sync)
   // called by server
 {
   if (sync > synclimit) sync = synclimit;
@@ -95,6 +95,10 @@ void Pawn::input(int in, double sync)
   // rotate around y
   v.rotY(rad(props.rot.y)); // rotation is applied locally and sent
   v.rotZ(rad(props.rot.z)); // for fun
+  // rotate with respect to level
+  v.rotX(rad(levelrot.x));
+  v.rotY(rad(levelrot.y));
+  v.rotZ(rad(levelrot.z));
   /*geo::Vector v2;
   float radY = props.rot.y / 180.0 * 3.14159;
   float sinRadY = sin(radY);

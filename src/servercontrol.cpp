@@ -276,7 +276,7 @@ void Servercontrol::networkloop()
 void Servercontrol::physicsloop()
 {
   for (int i = 0; i < users; i++) {
-    player[i].input(keyset[i], sync);
+    player[i].input(keyset[i], level.getRot(), sync);
     player[i].move(level, sync);
     if (keyset[i] & KEYS_CONSTRUCT) {
       if (level.createBlock(player[i].getPos())) {
@@ -297,9 +297,16 @@ void Servercontrol::physicsloop()
   }
 
   // for fun
-  // would need to transmit this
-  //geo::Vector rot(0, 0, 1);
-  //level.turn(rot);
+  /*geo::Vector rot(0, 0, 0.1);
+  level.turn(rot);
+  geo::Vector temp = level.getRot();
+  Unit unit;
+  unit.flag = UNIT_POSITION;
+  unit.position.id = 201; // levelrot
+  unit.position.x = temp.x;
+  unit.position.y = temp.y;
+  unit.position.z = temp.z;
+  net.addUnitAll(unit, server, -1);*/
 
   //picturecontrol.go(sync); // should do transmission in own loop, like sound loop in client
 }

@@ -38,7 +38,7 @@ class Pawn {
 
     //virtual void draw() = 0;
 
-    void input(int in, double sync);
+    void input(int in, geo::Vector levelrot, double sync);
 
     void move(Level &level, double sync);
     void turn(geo::Vector rot);

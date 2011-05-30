@@ -303,6 +303,9 @@ void Clientcontrol::process(Unit unit)
         // create block
         geo::Vector pos(unit.position.x, unit.position.y, unit.position.z);
         level.createBlock(pos);
+      }else if (unit.position.id == 201) {
+        geo::Vector pos(unit.position.x, unit.position.y, unit.position.z);
+        level.setRot(pos);
       }else out << VERBOSE_LOUD << "Error with position ID - out of range: " << unit.position.id << "\n";
 
       // temporary output to see what's going on
