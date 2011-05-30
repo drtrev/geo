@@ -73,6 +73,7 @@ class Level : public Pawn {
     std::vector <LevelNames::Wall> collisionWalls; // for displaying them
 
   protected:
+    void addSlopedWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float half);
     void addWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float scale, float pawnRadius);
     void getWalls(std::vector <LevelNames::Wall> &walls, geo::Vector origpos, geo::Vector parentorigin, int x, int y, int z,
                   LevelNames::BlockArray *blocks, float scale, float pawnRadius);

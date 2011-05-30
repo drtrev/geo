@@ -206,12 +206,85 @@ void Level::draw(Vector playerpos, Vector playerrot)
   graphics->drawLevel(top, props.pos, props.rot, playerpos, playerrot, collisionWalls);
 }
 
+void Level::addSlopedWalls(std::vector <Wall> &walls, Vector blockpos, float half)
+// add slopes around block
+{
+  // front
+  const float oneoverroot2 = 0.7071067811;
+  Wall wall;
+  wall.corner1.x = blockpos.x - half;
+  wall.corner1.y = blockpos.y - half;
+  wall.corner1.z = blockpos.z + half * 3;
+  wall.corner2.x = blockpos.x + half;
+  wall.corner2.y = blockpos.y - half;
+  wall.corner2.z = blockpos.z + half * 3;
+  wall.corner3.x = blockpos.x + half;
+  wall.corner3.y = blockpos.y + half;
+  wall.corner3.z = blockpos.z + half;
+  wall.corner4.x = blockpos.x - half;
+  wall.corner4.y = blockpos.y + half;
+  wall.corner4.z = blockpos.z + half;
+  wall.normal.x = 0; wall.normal.y = oneoverroot2; wall.normal.z = oneoverroot2;
+  walls.push_back(wall);
+
+  // right
+  wall.corner1.x = blockpos.x + half * 3;
+  wall.corner1.y = blockpos.y - half;
+  wall.corner1.z = blockpos.z + half;
+  wall.corner2.x = blockpos.x + half * 3;
+  wall.corner2.y = blockpos.y - half;
+  wall.corner2.z = blockpos.z - half;
+  wall.corner3.x = blockpos.x + half;
+  wall.corner3.y = blockpos.y + half;
+  wall.corner3.z = blockpos.z - half;
+  wall.corner4.x = blockpos.x + half;
+  wall.corner4.y = blockpos.y + half;
+  wall.corner4.z = blockpos.z + half;
+  wall.normal.x = oneoverroot2; wall.normal.y = oneoverroot2; wall.normal.z = 0;
+  walls.push_back(wall);
+
+  // back
+  wall.corner1.x = blockpos.x + half;
+  wall.corner1.y = blockpos.y - half;
+  wall.corner1.z = blockpos.z - half * 3;
+  wall.corner2.x = blockpos.x - half;
+  wall.corner2.y = blockpos.y - half;
+  wall.corner2.z = blockpos.z - half * 3;
+  wall.corner3.x = blockpos.x - half;
+  wall.corner3.y = blockpos.y + half;
+  wall.corner3.z = blockpos.z - half;
+  wall.corner4.x = blockpos.x + half;
+  wall.corner4.y = blockpos.y + half;
+  wall.corner4.z = blockpos.z - half;
+  wall.normal.x = 0; wall.normal.y = oneoverroot2; wall.normal.z = -oneoverroot2;
+  walls.push_back(wall);
+
+  // left
+  wall.corner1.x = blockpos.x - half * 3;
+  wall.corner1.y = blockpos.y - half;
+  wall.corner1.z = blockpos.z - half;
+  wall.corner2.x = blockpos.x - half * 3;
+  wall.corner2.y = blockpos.y - half;
+  wall.corner2.z = blockpos.z + half;
+  wall.corner3.x = blockpos.x - half;
+  wall.corner3.y = blockpos.y + half;
+  wall.corner3.z = blockpos.z + half;
+  wall.corner4.x = blockpos.x - half;
+  wall.corner4.y = blockpos.y + half;
+  wall.corner4.z = blockpos.z - half;
+  wall.normal.x = -oneoverroot2; wall.normal.y = oneoverroot2; wall.normal.z = 0;
+  walls.push_back(wall);
+
+}
+
 void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, float pawnRadius)
 {
   float half = scale / 2.0;
   blockpos += half;
 
   half += pawnRadius; // expand walls by the radius of the object we're checking against
+
+  addSlopedWalls(walls, blockpos, half);
 
   // front
   Wall wall;
@@ -360,9 +433,13 @@ void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentori
       // are they actually within this big block?
       // if not then it'll be detected as out of bounds
 
-      for (int checkz = tz - 1; checkz < tz + 2; checkz++)
-        for (int checky = ty - 1; checky < ty + 2; checky++)
-          for (int checkx = tx - 1; checkx < tx + 2; checkx++)
+      //for (int checkz = tz - 1; checkz < tz + 2; checkz++)
+       // for (int checky = ty - 1; checky < ty + 2; checky++)
+        //  for (int checkx = tx - 1; checkx < tx + 2; checkx++)
+        // TODO change this, only search more when at small blocks, add slopes for those
+      for (int checkz = tz - 2; checkz < tz + 3; checkz++)
+        for (int checky = ty - 2; checky < ty + 3; checky++)
+          for (int checkx = tx - 2; checkx < tx + 3; checkx++)
             getWalls(walls, origpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
 
     }
