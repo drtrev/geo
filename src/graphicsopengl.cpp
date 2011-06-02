@@ -501,7 +501,7 @@ void GraphicsOpenGL::drawBlocks(LevelNames::BlockArray *blocks, float scale)
 void GraphicsOpenGL::drawWall(LevelNames::Wall& wall)
 {
   glPushMatrix();
-  float scale = 1.001; // draw over existing walls - this actually offsets things slightly since coords are world
+  float scale = 1.00001; // draw over existing walls - this actually offsets things slightly since coords are world
   glScalef(scale, scale, scale);
   glColor4f(1, 0, 0, 1);
   //glDisable(GL_DEPTH_TEST);
