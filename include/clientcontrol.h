@@ -62,6 +62,7 @@ class Clientcontrol : public Controller {
     int myId;  /**< My client ID. */
 
     bool graphicsHide; /**< Don't draw graphics. */
+    float mousesensitivity;
 
   public:
     Clientcontrol();  /**< Constructor. */

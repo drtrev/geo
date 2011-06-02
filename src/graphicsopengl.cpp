@@ -571,7 +571,7 @@ void GraphicsOpenGL::drawBullet(geo::Vector bulletpos)
   glPopMatrix();
 }
 
-void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls, Bullet* bullets)
+void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls, Bullet* bullet)
 {
   glPushMatrix();
 
@@ -589,7 +589,7 @@ void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& leve
 
   for (unsigned int i = 0; i < collisionWalls.size(); i++) drawWall(collisionWalls[i]);
 
-  for (int i = 0; i < BULLETS_MAX; i++) if (bullets[i].getActive()) drawBullet(bullets[i].getPos());
+  for (int i = 0; i < BULLETS_MAX; i++) if (bullet[i].getActive()) drawBullet(bullet[i].getPos());
 
   glPopMatrix();
 }

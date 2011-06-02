@@ -91,7 +91,7 @@ class Level : public Pawn {
 
     bool createBlock(geo::Vector playerPos);
 
-    void draw(geo::Vector playerpos, geo::Vector playerrot, Bullet* bullets); /**< Render the map. \param thumb set to true if this is the thumbnail view, false otherwise. */
+    void draw(geo::Vector playerpos, geo::Vector playerrot, Bullet* bullet); /**< Render the map. \param thumb set to true if this is the thumbnail view, false otherwise. */
 
     int checkCollision(Props &props);
 };

@@ -4,7 +4,17 @@
 #include <cmath>
 #include <ostream>
 
-#define BULLETS_MAX 50
+#define IDHACK_PLAYERPOS_MIN 0
+#define IDHACK_PLAYERPOS_MAX 100
+#define IDHACK_PLAYERROT_MIN 100
+#define IDHACK_PLAYERROT_MAX 200
+#define IDHACK_BULLETPOS_MIN 200
+#define IDHACK_BULLETPOS_MAX 300
+#define IDHACK_BULLETROT_MIN 300
+#define IDHACK_BULLETROT_MAX 400
+#define IDHACK_CREATE 400
+#define IDHACK_LEVELROT 401
+#define BULLETS_MAX 100 // should be consistent with IDHACKs above
 
 namespace geo {
 

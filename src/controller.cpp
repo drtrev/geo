@@ -48,7 +48,7 @@ Controller::Controller()
   players = 5; // to start with
   player = new Player[players];
 
-  bullets = new Bullet[BULLETS_MAX];
+  bullet = new Bullet[BULLETS_MAX];
 }
 
 Controller::~Controller()
@@ -58,7 +58,7 @@ Controller::~Controller()
     cout << "Deleted players." << endl;
   }
 
-  delete [] bullets;
+  delete [] bullet;
 }
 
 void Controller::gameoverShared()

@@ -19,6 +19,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#include "bullet.h"
 #include <cmath>
 #include <iostream>
 #include <signal.h>
@@ -70,7 +71,7 @@ class Controller {
     Player *player;
     int players;
 
-    Bullet* bullets;
+    Bullet* bullet;
     Level level;
 
     bool graphicsActive;

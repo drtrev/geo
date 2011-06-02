@@ -110,7 +110,7 @@ class GraphicsOpenGL : public Graphics {
     void drawBlocks(LevelNames::BlockArray*, float scale);
     void drawWall(LevelNames::Wall& wall);
     void drawBullet(geo::Vector bulletpos);
-    void drawLevel(LevelNames::BlockArray*, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls, Bullet* bullets);
+    void drawLevel(LevelNames::BlockArray*, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls, Bullet* bullet);
 
     void drawText(GraphicsInfo g);
     void drawViewbox(double posX, double posY, double scale, double thumbOffsetX, double thumbOffsetY, double thumbScale, float r, float g, float b, float a);

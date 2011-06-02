@@ -43,6 +43,9 @@ Clientcontrol::Clientcontrol()
 
   myId = -1;
   graphicsHide = false; // TODO make CLA
+
+  mousesensitivity = 0.1;
+
   // graphicsHide and graphicsActive:
   // graphicsActive = there's a window, can take input etc.
   // then can set graphicsHide to true to not draw (e.g. only view in server)
@@ -225,9 +228,6 @@ void Clientcontrol::inputloop()
 
   }
 
-  // for now:
-  static float mousesensitivity = 0.05; // TODO make member var
-  
   if (mousexrel != oldmousexrel || mouseyrel != oldmouseyrel) {
     oldmousexrel = mousexrel;
     oldmouseyrel = mouseyrel;
@@ -288,7 +288,7 @@ void Clientcontrol::process(Unit unit)
       }
       break;
     case UNIT_POSITION:
-      if (unit.position.id > -1 && unit.position.id < players) {
+      if (unit.position.id > IDHACK_PLAYERPOS_MIN - 1 && unit.position.id < IDHACK_PLAYERPOS_MAX) { // was > -1 and < players
         player[unit.position.id].setX(unit.position.x);
         player[unit.position.id].setY(unit.position.y);
         player[unit.position.id].setZ(unit.position.z);
@@ -296,16 +296,32 @@ void Clientcontrol::process(Unit unit)
         //user[unit.position.id].y = unit.position.y;
         //user[unit.position.id].zoom = unit.position.z;
       //map.setUser(unit.position.id, unit.position.x, unit.position.y, unit.position.z);
-      }else if (unit.position.id > 99 && unit.position.id < players+100) {
+
+      }else if (unit.position.id > IDHACK_PLAYERROT_MIN - 1 && unit.position.id < IDHACK_PLAYERROT_MAX) { // was 99 to players+100
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
-        player[unit.position.id - 100].setRot(rot);
-      }else if (unit.position.id == 200) {
+        player[unit.position.id - IDHACK_PLAYERROT_MIN].setRot(rot);
+
+      }else if (unit.position.id > IDHACK_BULLETPOS_MIN - 1 && unit.position.id < IDHACK_BULLETPOS_MAX) {
+        int id = unit.position.id - IDHACK_BULLETPOS_MIN;
+        bullet[id].setX(unit.position.x);
+        bullet[id].setY(unit.position.y);
+        bullet[id].setZ(unit.position.z);
+
+      }else if (unit.position.id > IDHACK_BULLETROT_MIN - 1 && unit.position.id < IDHACK_BULLETROT_MAX) {
+        geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
+        int id = unit.position.id - IDHACK_BULLETROT_MIN;
+        bullet[id].setRot(rot);
+        bullet[id].setActive(true);
+
+      }else if (unit.position.id == IDHACK_CREATE) {
         // create block
         geo::Vector pos(unit.position.x, unit.position.y, unit.position.z);
         level.createBlock(pos);
-      }else if (unit.position.id == 201) {
+
+      }else if (unit.position.id == IDHACK_LEVELROT) {
         geo::Vector pos(unit.position.x, unit.position.y, unit.position.z);
         level.setRot(pos);
+
       }else out << VERBOSE_LOUD << "Error with position ID - out of range: " << unit.position.id << "\n";
 
       // temporary output to see what's going on
@@ -395,7 +411,7 @@ void Clientcontrol::graphicsloop()
 
     graphics->drawStart();
     //map.draw(false); // TODO remove
-    level.draw(player[myId].getPos(), player[myId].getRot(), bullets);
+    level.draw(player[myId].getPos(), player[myId].getRot(), bullet);
 
     //for (int i = 0; i < users; i++) user[i].draw();
 

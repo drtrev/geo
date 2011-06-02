@@ -177,12 +177,12 @@ void Servercontrol::process(Unit unit)
       }
       break;
     case UNIT_POSITION:
-      // TODO send out in rhythm, not straight away, i.e. send every netloop
-      // this should be only rotation here anyway
-      net.addUnitAll(unit, server, unit.position.id - 100); // don't send back to source
-      if (unit.position.id > 99 && unit.position.id < players + 100) {
+      // this should be only rotation here
+      if (unit.position.id > IDHACK_PLAYERROT_MIN  - 1 && unit.position.id < IDHACK_PLAYERROT_MAX) {
+        int id = unit.position.id - IDHACK_PLAYERROT_MIN;
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
-        player[unit.position.id - 100].setRot(rot);
+        player[id].setRot(rot);
+        net.addUnitAll(unit, server, id); // don't send back to source
         //std::cout << "Set player rot to: " << player[0].getRot() << std::endl;
       }
       break;
@@ -282,7 +282,7 @@ void Servercontrol::physicsloop()
       if (level.createBlock(player[i].getPos())) {
         Unit unit;
         unit.flag = UNIT_POSITION;
-        unit.position.id = 200; // create
+        unit.position.id = IDHACK_CREATE;
         unit.position.x = player[i].getPos().x;
         unit.position.y = player[i].getPos().y;
         unit.position.z = player[i].getPos().z;
@@ -302,7 +302,7 @@ void Servercontrol::physicsloop()
   geo::Vector temp = level.getRot();
   Unit unit;
   unit.flag = UNIT_POSITION;
-  unit.position.id = 201; // levelrot
+  unit.position.id = IDHACK_LEVELROT;
   unit.position.x = temp.x;
   unit.position.y = temp.y;
   unit.position.z = temp.z;
@@ -314,7 +314,7 @@ void Servercontrol::physicsloop()
 void Servercontrol::graphicsloop()
 {
   graphics->drawStart();
-  level.draw(player[0].getPos(), player[0].getRot(), bullets);
+  level.draw(player[0].getPos(), player[0].getRot(), bullet);
   graphics->drawStop();
 
   out.refreshScreen();
