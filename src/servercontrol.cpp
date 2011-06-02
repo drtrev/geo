@@ -289,12 +289,29 @@ void Servercontrol::physicsloop()
         net.addUnitAll(unit, server, -1);
       }
     }
+    if (keyset[i] & KEYS_FIRE) {
+      int nextbull = -1;
+      for (int bull = 0; bull < BULLETS_MAX; bull++)
+        if (!bullet[bull].getActive()) { nextbull = bull; break; }
+
+      if (nextbull > -1) {
+        bullet[nextbull].setPos(player[i].getPos());
+        bullet[nextbull].setRot(player[i].getRot());
+        geo::Vector v(0, 0, -0.1);
+        bullet[nextbull].setMove(v, level.getRot());
+        bullet[nextbull].setActive(true);
+        out << VERBOSE_LOUD << "fired\n";
+      }
+    }
 
     //picturecontrol.input(keyset[i], net, server); // pass input for each player
 
-    // remove next and back (single effect) keys from keyset because they've been dealt with now
-    keyset[i] &= ~(KEYS_NEXT | KEYS_BACK);
+    // remove next back and fire (single effect) keys from keyset because they've been dealt with now
+    keyset[i] &= ~(KEYS_NEXT | KEYS_BACK | KEYS_FIRE);
   }
+
+  for (int i = 0; i < BULLETS_MAX; i++)
+    if (bullet[i].getActive()) bullet[i].moveSimple(level, sync);
 
   // for fun
   /*geo::Vector rot(0, 0, 0.1);

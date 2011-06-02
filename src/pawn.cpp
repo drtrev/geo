@@ -117,6 +117,35 @@ void Pawn::input(int in, geo::Vector levelrot, double sync)
   if (in & KEYS_DOWN) props.accel.y -= amount;*/
 }
 
+void Pawn::setMove(geo::Vector v, geo::Vector levelrot)
+// set an initial movement vector, e.g. for a bullet
+// not called setSpeed, because that would imply caller is doing the calcs
+{
+  v.rotX(rad(props.rot.x));
+  v.rotY(rad(props.rot.y));
+  v.rotZ(rad(props.rot.z));
+  // rotate with respect to level
+  v.rotX(rad(levelrot.x));
+  v.rotY(rad(levelrot.y));
+  v.rotZ(rad(levelrot.z));
+  props.speed = v;
+}
+
+void Pawn::moveSimple(Level &level, double sync)
+// just use speed
+{
+  if (sync > synclimit) sync = synclimit;
+  props.oldPos = props.pos;
+
+  // TODO can I optimise this, i.e. pos += speed ...;
+  props.pos.x += props.speed.x * sync;
+  props.pos.y += props.speed.y * sync;
+  props.pos.z += props.speed.z * sync;
+
+  //Block* blockptr;
+  //int hit = level.checkCollisionSimple(blockptr);
+}
+
 void Pawn::move(Level &level, double sync)
 {
   // TODO optimise this using the operator overloads in types.h

@@ -82,6 +82,9 @@ int InputSDL::mapMouse(Uint8 button, bool keydown)
 
   switch (button)
   {
+    case SDL_BUTTON_LEFT:
+      key = KEYS_FIRE;
+      break;
     case SDL_BUTTON_MIDDLE:
       key = KEYS_JUMP;
       //std::cout << "Jump" << std::endl;

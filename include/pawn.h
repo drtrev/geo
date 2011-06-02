@@ -40,6 +40,8 @@ class Pawn {
 
     void input(int in, geo::Vector levelrot, double sync);
 
+    void setMove(geo::Vector v, geo::Vector levelrot);
+    void moveSimple(Level &level, double sync);
     void move(Level &level, double sync);
     void turn(geo::Vector rot);
 

@@ -13,3 +13,7 @@ now you've remapped, see if it's within boundary
 
 
 make sloped walls for small blocks, but have them inside block itelf, overlapping. only check for walls (getWalls) for 3x3 blocks, not 4x4 (was changed temp, see level TODO)
+
+
+check bullets are appearing properly in server, then maybe make 'createBullet()' and put it in controller,
+and get client to also call it
