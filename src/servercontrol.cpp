@@ -314,7 +314,7 @@ void Servercontrol::physicsloop()
 void Servercontrol::graphicsloop()
 {
   graphics->drawStart();
-  level.draw(player[0].getPos(), player[0].getRot());
+  level.draw(player[0].getPos(), player[0].getRot(), bullets);
   graphics->drawStop();
 
   out.refreshScreen();

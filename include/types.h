@@ -4,6 +4,8 @@
 #include <cmath>
 #include <ostream>
 
+#define BULLETS_MAX 50
+
 namespace geo {
 
 struct Vector {

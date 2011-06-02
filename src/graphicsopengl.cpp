@@ -20,6 +20,7 @@
  */
 
 #include "graphicsopengl.h"
+#include "bullet.h"
 #ifdef _MSC_VER
   #include <windows.h>
   #include <GL/glu.h>
@@ -518,7 +519,59 @@ void GraphicsOpenGL::drawWall(LevelNames::Wall& wall)
   glPopMatrix();
 }
 
-void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls)
+void GraphicsOpenGL::drawBullet(geo::Vector bulletpos)
+{
+  glPushMatrix();
+  glTranslatef(bulletpos.x, bulletpos.y, bulletpos.z);
+
+  glColor4f(1, 0.5, 0.5, 1);
+  float scale = 0.1; // used also for calculating normal below
+  glScalef(scale, scale, scale);
+
+  // should use facet tables here, but it's only one object so not too fussed
+  float normal = 1*scale; // need normals to match the scale, so they're always unit length
+  glBegin(GL_QUADS);
+  glNormal3f(0, 0, normal); // front
+  glVertex3f(-0.5, -0.5, 0.5);
+  glVertex3f(0.5, -0.5, 0.5);
+  glVertex3f(0.5, 0.5, 0.5);
+  glVertex3f(-0.5, 0.5, 0.5);
+
+  glNormal3f(0, 0, -normal); // back
+  glVertex3f(0.5, -0.5, -0.5);
+  glVertex3f(-0.5, -0.5, -0.5);
+  glVertex3f(-0.5, 0.5, -0.5);
+  glVertex3f(0.5, 0.5, -0.5);
+
+  glNormal3f(0, normal, 0); // top
+  glVertex3f(-0.5, 0.5, 0.5);
+  glVertex3f(0.5, 0.5, 0.5);
+  glVertex3f(0.5, 0.5, -0.5);
+  glVertex3f(-0.5, 0.5, -0.5);
+
+  glNormal3f(0, -normal, 0); // bottom
+  glVertex3f(0.5, -0.5, 0.5);
+  glVertex3f(-0.5, -0.5, 0.5);
+  glVertex3f(-0.5, -0.5, -0.5);
+  glVertex3f(0.5, -0.5, -0.5);
+
+  glNormal3f(-normal, 0, 0); // left
+  glVertex3f(-0.5, -0.5, -0.5);
+  glVertex3f(-0.5, -0.5, 0.5);
+  glVertex3f(-0.5, 0.5, 0.5);
+  glVertex3f(-0.5, 0.5, -0.5);
+
+  glNormal3f(normal, 0, 0); // right
+  glVertex3f(0.5, -0.5, 0.5);
+  glVertex3f(0.5, -0.5, -0.5);
+  glVertex3f(0.5, 0.5, -0.5);
+  glVertex3f(0.5, 0.5, 0.5);
+  glEnd();
+
+  glPopMatrix();
+}
+
+void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& levelpos, geo::Vector& levelrot, geo::Vector& playerpos, geo::Vector& playerrot, std::vector<LevelNames::Wall>& collisionWalls, Bullet* bullets)
 {
   glPushMatrix();
 
@@ -535,6 +588,8 @@ void GraphicsOpenGL::drawLevel(LevelNames::BlockArray *blocks, geo::Vector& leve
   drawBlocks(blocks, scale);
 
   for (unsigned int i = 0; i < collisionWalls.size(); i++) drawWall(collisionWalls[i]);
+
+  for (int i = 0; i < BULLETS_MAX; i++) if (bullets[i].getActive()) drawBullet(bullets[i].getPos());
 
   glPopMatrix();
 }

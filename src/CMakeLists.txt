@@ -26,7 +26,7 @@ LINK_DIRECTORIES( /usr/not-backed-up/work/oglft-0.9/lib
 /usr/not-backed-up/work/openal-soft-1.7.411/build/
 /usr/not-backed-up/openal-soft-1.7.411/build/ /usr/local/lib )
 
-SET ( geo_SRCS clientcontrol controller directory graphics 
+SET ( geo_SRCS bullet clientcontrol controller directory graphics 
 graphicsopengl input inputSDL inputX11 level main map outstd outverbose
 pawn player servercontrol tess textures timer windowgen windowgensdl )
 

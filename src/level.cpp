@@ -201,9 +201,9 @@ bool Level::createBlock(Vector worldPos)
   return false; // not created
 }
 
-void Level::draw(Vector playerpos, Vector playerrot)
+void Level::draw(Vector playerpos, Vector playerrot, Bullet* bullets)
 {
-  graphics->drawLevel(top, props.pos, props.rot, playerpos, playerrot, collisionWalls);
+  graphics->drawLevel(top, props.pos, props.rot, playerpos, playerrot, collisionWalls, bullets);
 }
 
 void Level::addSlopedWalls(std::vector <Wall> &walls, Vector blockpos, float half)

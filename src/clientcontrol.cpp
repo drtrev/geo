@@ -395,7 +395,7 @@ void Clientcontrol::graphicsloop()
 
     graphics->drawStart();
     //map.draw(false); // TODO remove
-    level.draw(player[myId].getPos(), player[myId].getRot());
+    level.draw(player[myId].getPos(), player[myId].getRot(), bullets);
 
     //for (int i = 0; i < users; i++) user[i].draw();
 

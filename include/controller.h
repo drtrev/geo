@@ -70,6 +70,7 @@ class Controller {
     Player *player;
     int players;
 
+    Bullet* bullets;
     Level level;
 
     bool graphicsActive;
