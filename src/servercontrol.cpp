@@ -352,6 +352,12 @@ void Servercontrol::physicsloop()
       if (hit > 0) {
         bullet[i].setActive(false);
         Unit unit;
+        unit.flag = UNIT_POSITION;
+        unit.position.id = IDHACK_BULLETPOS_MIN + i;
+        unit.position.x = bullet[i].getPos().x;
+        unit.position.y = bullet[i].getPos().y;
+        unit.position.z = bullet[i].getPos().z;
+        net.addUnitAll(unit, server, -1);
         unit.flag = UNIT_GENERIC;
         unit.generic.from = 0;
         unit.generic.to = 0;

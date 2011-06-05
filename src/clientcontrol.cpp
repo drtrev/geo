@@ -270,6 +270,9 @@ void Clientcontrol::process(Unit unit)
       if (unit.generic.objectid < 0 || unit.generic.objectid > BULLETS_MAX - 1) {
         out << VERBOSE_LOUD << "Error: generic unit, bad id: " << unit.generic.objectid << "\n";
       }else{
+        // pos will have been received first
+        int hit = level.checkCollisionSimple(bullet[unit.generic.objectid].getPos());
+        if (hit == 0) out << VERBOSE_LOUD << "Error: we're out of sync. No hit here!\n";
         bullet[unit.generic.objectid].setActive(false);
         out << VERBOSE_QUIET << "bullet deactivated.\n";
       }

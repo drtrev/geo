@@ -425,7 +425,7 @@ void GraphicsOpenGL::drawBlock(int x, int y, int z, float scale)
   glPushMatrix();
   if (scale > 9) glColor4f(0.7, .7, .7, 1);
   else if (scale > 0.5) glColor4f(0, .7, 0, 1);
-  else glColor4f(.7, 0, 0, 1);
+  else glColor4f(0, 0, 0.7, 1);
 
   glTranslatef(x + 0.5, y + 0.5, z + 0.5);
 

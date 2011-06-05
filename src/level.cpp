@@ -356,10 +356,42 @@ void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, fl
   half += pawnRadius; // expand walls by the radius of the object we're checking against
 
   // for small blocks:
-  if (scale > 0.09 && scale < 0.11) {
+  /*//if (scale > 0.09 && scale < 0.11) {
     addSlopedWalls(walls, blockpos, half);
+    // top
+    Wall wall;
+    wall.corner1.x = blockpos.x - half;
+    wall.corner1.y = blockpos.y + half;
+    wall.corner1.z = blockpos.z + half;
+    wall.corner2.x = blockpos.x + half;
+    wall.corner2.y = blockpos.y + half;
+    wall.corner2.z = blockpos.z + half;
+    wall.corner3.x = blockpos.x + half;
+    wall.corner3.y = blockpos.y + half;
+    wall.corner3.z = blockpos.z - half;
+    wall.corner4.x = blockpos.x - half;
+    wall.corner4.y = blockpos.y + half;
+    wall.corner4.z = blockpos.z - half;
+    wall.normal.x = 0; wall.normal.y = 1; wall.normal.z = 0;
+    walls.push_back(wall);
+
+    // bottom
+    wall.corner1.x = blockpos.x - half;
+    wall.corner1.y = blockpos.y - half;
+    wall.corner1.z = blockpos.z - half;
+    wall.corner2.x = blockpos.x + half;
+    wall.corner2.y = blockpos.y - half;
+    wall.corner2.z = blockpos.z - half;
+    wall.corner3.x = blockpos.x + half;
+    wall.corner3.y = blockpos.y - half;
+    wall.corner3.z = blockpos.z + half;
+    wall.corner4.x = blockpos.x - half;
+    wall.corner4.y = blockpos.y - half;
+    wall.corner4.z = blockpos.z + half;
+    wall.normal.x = 0; wall.normal.y = -1; wall.normal.z = 0;
+    walls.push_back(wall);
     return;
-  }
+  //}*/
 
   // front
   Wall wall;
@@ -480,7 +512,7 @@ void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentor
 
     if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
 
-      bool output = false;
+      bool output = true;
 
       // transform original x y and z to children's block coords
       Vector torigin = parentorigin;
@@ -499,20 +531,20 @@ void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentor
       int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
       tx = (int) blockpos.x, ty = (int) blockpos.y, tz = (int) blockpos.z;
 
-      if (output) cout << "tx: " << tx << ", ty: " << ty << ", tz: " << tz << endl;
+      if (output) cout << "scale: " << scale << ", tx: " << tx << ", ty: " << ty << ", tz: " << tz << endl;
 
       // now we've got the transformed coords,
       // are they actually within this big block?
       // if not then it'll be detected as out of bounds
 
-      //for (int checkz = tz - 1; checkz < tz + 2; checkz++)
-       // for (int checky = ty - 1; checky < ty + 2; checky++)
-        //  for (int checkx = tx - 1; checkx < tx + 2; checkx++)
-        // TODO change this, only search more when at small blocks, add slopes for those
-      for (int checkz = tz - 2; checkz < tz + 3; checkz++)
-        for (int checky = ty - 2; checky < ty + 3; checky++)
-          for (int checkx = tx - 2; checkx < tx + 3; checkx++)
+      for (int checkz = tz - 1; checkz < tz + 2; checkz++)
+        for (int checky = ty - 1; checky < ty + 2; checky++)
+          for (int checkx = tx - 1; checkx < tx + 2; checkx++)
             getWalls(walls, tpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
+
+      //for (int checkz = tz - 2; checkz < tz + 3; checkz++)
+        //for (int checky = ty - 2; checky < ty + 3; checky++)
+          //for (int checkx = tx - 2; checkx < tx + 3; checkx++)
 
     }
 
@@ -801,7 +833,6 @@ int Level::checkCollisionSimple(Vector localpos, Vector parentorigin, int x, int
       torigin.y += y * scale;
       torigin.z += z * scale;
 
-      float scale = 10.0;
       Vector tpos;
       tpos.x = localpos.x - x * scale;
       tpos.y = localpos.y - y * scale;
@@ -825,12 +856,23 @@ int Level::checkCollisionSimple(Vector localpos, Vector parentorigin, int x, int
 
     }else if (blocks->b[x][y][z].state == BLOCK_SOLID) {
       cout << "HIT!" << endl;
-      return 1;
-      // TODO XXX working here
       // create a child
-      //blocks->b[x][y][z].children = new BlockArray;
-      //testallocs++;
-      //blocks->b[x][y][z].state = BLOCK_CHILDREN;
+      if (scale > 0.9) {
+        blocks->b[x][y][z].children = new BlockArray;
+        testallocs++;
+        blocks->b[x][y][z].state = BLOCK_CHILDREN;
+        for (int i = 0; i < BLOCKARRAY_WIDTH; ++i) {
+          for (int j = 0; j < BLOCKARRAY_HEIGHT; ++j) {
+            for (int k = 0; k < BLOCKARRAY_DEPTH; ++k) {
+              blocks->b[x][y][z].children->b[i][j][k].state = BLOCK_SOLID;
+            }
+          }
+        }
+      }else{
+        // TODO delete children when all are empty!
+        blocks->b[x][y][z].state = BLOCK_EMPTY;
+      }
+      return 1;
     }
 
   }
