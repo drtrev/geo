@@ -134,6 +134,8 @@ void Pawn::setMove(geo::Vector v, geo::Vector levelrot)
 void Pawn::moveSimple(Level &level, double sync)
 // just use speed
 {
+  // if there's a sync limit, client goes slower than server
+  // so can't use this.
   //if (sync > synclimit) sync = synclimit;
   props.oldPos = props.pos;
 
