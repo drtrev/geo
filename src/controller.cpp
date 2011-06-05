@@ -49,6 +49,7 @@ Controller::Controller()
   player = new Player[players];
 
   bullet = new Bullet[BULLETS_MAX];
+  bulletvec.x = 0; bulletvec.y = 0; bulletvec.z = -0.5;
 }
 
 Controller::~Controller()

@@ -311,6 +311,7 @@ void Clientcontrol::process(Unit unit)
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
         int id = unit.position.id - IDHACK_BULLETROT_MIN;
         bullet[id].setRot(rot);
+        bullet[nextbull].setMove(bulletvec, level.getRot());
         bullet[id].setActive(true);
 
       }else if (unit.position.id == IDHACK_CREATE) {

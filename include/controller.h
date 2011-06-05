@@ -72,6 +72,7 @@ class Controller {
     int players;
 
     Bullet* bullet;
+    geo::Vector bulletvec;
     Level level;
 
     bool graphicsActive;

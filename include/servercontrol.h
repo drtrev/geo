@@ -92,6 +92,8 @@ class Servercontrol : public Controller {
     void physicsloop();    /**< Perform any movement calculations. */
     void graphicsloop();   /**< Display graphics. */
 
+    int createBullet(geo::Vector pos, geo::Vector rot);
+
 };
 
 #endif

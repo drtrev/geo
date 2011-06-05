@@ -273,6 +273,26 @@ void Servercontrol::networkloop()
   server.sendAll();
 }
 
+int Servercontrol::createBullet(geo::Vector pos, geo::Vector rot)
+// both server and client create their own copy of the bullet
+// client moves it locally, server will say when it's collided
+// returns bullet id for sending out by server, or -1
+{
+  int nextbull = -1;
+  for (int bull = 0; bull < BULLETS_MAX; bull++)
+    if (!bullet[bull].getActive()) { nextbull = bull; break; }
+
+  if (nextbull > -1) {
+    bullet[nextbull].setPos(pos);
+    bullet[nextbull].setRot(rot);
+    bullet[nextbull].setMove(bulletvec, level.getRot());
+    bullet[nextbull].setActive(true);
+    out << VERBOSE_LOUD << "fired\n";
+  }
+
+  return nextbull;
+}
+
 void Servercontrol::physicsloop()
 {
   for (int i = 0; i < users; i++) {
@@ -290,17 +310,31 @@ void Servercontrol::physicsloop()
       }
     }
     if (keyset[i] & KEYS_FIRE) {
-      int nextbull = -1;
-      for (int bull = 0; bull < BULLETS_MAX; bull++)
-        if (!bullet[bull].getActive()) { nextbull = bull; break; }
-
-      if (nextbull > -1) {
-        bullet[nextbull].setPos(player[i].getPos());
-        bullet[nextbull].setRot(player[i].getRot());
-        geo::Vector v(0, 0, -0.1);
-        bullet[nextbull].setMove(v, level.getRot());
-        bullet[nextbull].setActive(true);
-        out << VERBOSE_LOUD << "fired\n";
+      int bullid = createBullet(player[i].getPos(), player[i].getRot());
+      if (bullid > -1) {
+        // send bullet pos and rot
+        // in case we later send out levelrot in a different loop,
+        // make sure client has it up to date
+        geo::Vector temp = level.getRot();
+        Unit unit;
+        unit.flag = UNIT_POSITION;
+        unit.position.id = IDHACK_LEVELROT;
+        unit.position.x = temp.x;
+        unit.position.y = temp.y;
+        unit.position.z = temp.z;
+        net.addUnitAll(unit, server, -1);
+        unit.flag = UNIT_POSITION;
+        unit.position.id = IDHACK_BULLETPOS_MIN + bullid;
+        unit.position.x = player[i].getPos().x;
+        unit.position.y = player[i].getPos().y;
+        unit.position.z = player[i].getPos().z;
+        net.addUnitAll(unit, server, -1);
+        unit.flag = UNIT_POSITION;
+        unit.position.id = IDHACK_BULLETROT_MIN + bullid;
+        unit.position.x = player[i].getRot().x;
+        unit.position.y = player[i].getRot().y;
+        unit.position.z = player[i].getRot().z;
+        net.addUnitAll(unit, server, -1);
       }
     }
 
