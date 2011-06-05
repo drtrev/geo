@@ -335,6 +335,7 @@ void Servercontrol::physicsloop()
         unit.position.y = player[i].getRot().y;
         unit.position.z = player[i].getRot().z;
         net.addUnitAll(unit, server, -1);
+        out << VERBOSE_QUIET << "Sent bullet position\n";
       }
     }
 

@@ -132,7 +132,6 @@ bool Level::createBlock(Vector worldPos)
   // find block we're in
   // top level
 
-  std::vector <Wall> walls;
   Vector blockpos;
   
   blockpos = worldPos / 10;
@@ -460,7 +459,9 @@ void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, fl
   walls.push_back(wall);
 }
 
-void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, float pawnRadius)
+void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, float pawnRadius)
+// localpos is local to current recursion, i.e. it could be world, level 1 children, level 2 children etc.
+// x y z is the local block position
 {
   if (x < 0 || y < 0 || z < 0 ||
       x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
@@ -480,10 +481,7 @@ void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentori
     if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
 
       bool output = false;
-      //if (rand()%50 < 2) output = true;
 
-      if (output) cout << "origpos.x: " << origpos.x << ", origpos.y: " << origpos.y << ", origpos.z: " << origpos.z << endl;
-      if (output) cout << "y: " << y << endl;
       // transform original x y and z to children's block coords
       Vector torigin = parentorigin;
       torigin.x += x * scale;
@@ -491,14 +489,12 @@ void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentori
       torigin.z += z * scale;
 
       Vector tpos;
-      tpos.x = origpos.x - x * scale;
-      tpos.y = origpos.y - y * scale;
-      tpos.z = origpos.z - z * scale;
+      tpos.x = localpos.x - x * scale;
+      tpos.y = localpos.y - y * scale;
+      tpos.z = localpos.z - z * scale;
       scale /= 10.0;
-      if (output) cout << "origpos.x: " << origpos.x << ", origpos.y: " << origpos.y << ", origpos.z: " << origpos.z << endl;
+
       Vector blockpos = tpos / scale;
-      if (output) cout << "origpos.x: " << origpos.x << ", origpos.y: " << origpos.y << ", origpos.z: " << origpos.z << endl;
-      if (output) cout << "blockpos.x: " << blockpos.x << ", blockpos.y: " << blockpos.y << ", blockpos.z: " << blockpos.z << endl;
 
       int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
       tx = (int) blockpos.x, ty = (int) blockpos.y, tz = (int) blockpos.z;
@@ -516,7 +512,7 @@ void Level::getWalls(std::vector <Wall> &walls, Vector origpos, Vector parentori
       for (int checkz = tz - 2; checkz < tz + 3; checkz++)
         for (int checky = ty - 2; checky < ty + 3; checky++)
           for (int checkx = tx - 2; checkx < tx + 3; checkx++)
-            getWalls(walls, origpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
+            getWalls(walls, tpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
 
     }
 
@@ -776,6 +772,89 @@ int Level::checkCollision(Props &props)
 
   return 0;
 }
+
+/*int Level::checlCollisionSimple(Vector origpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale)
+{
+  if (x < 0 || y < 0 || z < 0 ||
+      x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
+      z >= BLOCKARRAY_DEPTH)
+  {
+    cout << "Bullet gone out" << endl;
+    return 2;
+  }else{
+    if (blocks->b[x][y][z].state == BLOCK_EMPTY) {
+      return 0; // no hit
+
+      // TODO XXX working here
+      // create a child
+      blocks->b[x][y][z].children = new BlockArray;
+      testallocs++;
+      blocks->b[x][y][z].state = BLOCK_CHILDREN;
+    }
+    if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
+
+      bool output = false;
+      //if (rand()%50 < 2) output = true;
+
+      // transform original x y and z to children's block coords
+      //Vector torigin = parentorigin;
+      //torigin.x += x * scale;
+      //torigin.y += y * scale;
+      //torigin.z += z * scale;
+
+      float scale = 10.0;
+      Vector tpos;
+      tpos.x = worldPos.x - x * scale;
+      tpos.y = worldPos.y - y * scale;
+      tpos.z = worldPos.z - z * scale;
+      scale /= 10.0;
+      Vector blockpos = tpos / scale;
+
+      int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
+      tx = (int) blockpos.x, ty = (int) blockpos.y, tz = (int) blockpos.z;
+
+      if (output) cout << "tx: " << tx << ", ty: " << ty << ", tz: " << tz << endl;
+
+      // now we've got the transformed coords,
+      // are they actually within this big block?
+      // if not then it'll be detected as out of bounds
+
+      BlockArray* b2 = blocks->b[x][y][z].children;
+
+      if (tx < 0 || ty < 0 || tz < 0
+        || tx > BLOCKARRAY_WIDTH || ty > BLOCKARRAY_HEIGHT || tz > BLOCKARRAY_DEPTH) {
+        cerr << "Creation of subblocks out of bounds" << endl;
+      }else{
+        if (b2->b[tx][ty][tz].state == BLOCK_EMPTY) {
+          b2->b[tx][ty][tz].state = BLOCK_SOLID;
+          return true; // created
+        }
+      }
+
+    }
+
+  }
+}*/
+
+/*bool Level::checkCollisionSimple(Vector worldPos)
+// round of player position and put a block there if poss
+{
+  // find block we're in
+  // top level
+
+  Vector blockpos;
+  
+  blockpos = worldPos / 10;
+
+  BlockArray* blocks = top;
+
+  int x, y, z;
+  x = (int) blockpos.x, y = (int) blockpos.y, z = (int) blockpos.z;
+
+  checkCollisionSimple(worldPos, x, y, z);
+
+  return false; // not created
+}*/
 
 /*int Level::checkCollisionBasic(Props &props)
 {

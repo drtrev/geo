@@ -44,7 +44,7 @@ Clientcontrol::Clientcontrol()
   myId = -1;
   graphicsHide = false; // TODO make CLA
 
-  mousesensitivity = 0.1;
+  mousesensitivity = 0.2;
 
   // graphicsHide and graphicsActive:
   // graphicsActive = there's a window, can take input etc.
@@ -306,13 +306,15 @@ void Clientcontrol::process(Unit unit)
         bullet[id].setX(unit.position.x);
         bullet[id].setY(unit.position.y);
         bullet[id].setZ(unit.position.z);
+        out << VERBOSE_QUIET << "received bullet pos\n";
 
       }else if (unit.position.id > IDHACK_BULLETROT_MIN - 1 && unit.position.id < IDHACK_BULLETROT_MAX) {
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
         int id = unit.position.id - IDHACK_BULLETROT_MIN;
         bullet[id].setRot(rot);
-        bullet[nextbull].setMove(bulletvec, level.getRot());
+        bullet[id].setMove(bulletvec, level.getRot());
         bullet[id].setActive(true);
+        out << VERBOSE_QUIET << "created bullet\n";
 
       }else if (unit.position.id == IDHACK_CREATE) {
         // create block
@@ -398,6 +400,8 @@ void Clientcontrol::physicsloop()
   // do any local calculations (e.g. visual effects; moving objects that have no input or randomness)
   //for (int i = 0; i < users; i++) user[i].local(sync);
   //picturecontrol.local(sync);
+  for (int i = 0; i < BULLETS_MAX; i++)
+    if (bullet[i].getActive()) bullet[i].moveSimple(level, sync);
 }
 
 void Clientcontrol::graphicsloop()
