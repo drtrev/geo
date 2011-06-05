@@ -75,12 +75,14 @@ class Level : public Pawn {
   protected:
     void addSlopedWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float half);
     void addWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float scale, float pawnRadius);
-    void getWalls(std::vector <LevelNames::Wall> &walls, geo::Vector origpos, geo::Vector parentorigin, int x, int y, int z,
+    void getWalls(std::vector <LevelNames::Wall> &walls, geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z,
                   LevelNames::BlockArray *blocks, float scale, float pawnRadius);
     std::vector <LevelNames::Wall> getWalls(Props &props);
 
     bool checkHitPlane(LevelNames::CollisionInfo col, geo::Vector &collisionPoint, float &collisionDistance,
                        bool limitToWall = true);
+
+    int checkCollisionSimple(geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z, LevelNames::BlockArray *blocks, float scale);
 
   public:
     Level(); /**< Constructor. */
@@ -94,6 +96,7 @@ class Level : public Pawn {
     void draw(geo::Vector playerpos, geo::Vector playerrot, Bullet* bullet); /**< Render the map. \param thumb set to true if this is the thumbnail view, false otherwise. */
 
     int checkCollision(Props &props);
+    int checkCollisionSimple(geo::Vector worldPos);
 };
 
 #endif

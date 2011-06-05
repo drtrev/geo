@@ -134,16 +134,13 @@ void Pawn::setMove(geo::Vector v, geo::Vector levelrot)
 void Pawn::moveSimple(Level &level, double sync)
 // just use speed
 {
-  if (sync > synclimit) sync = synclimit;
+  //if (sync > synclimit) sync = synclimit;
   props.oldPos = props.pos;
 
   // TODO can I optimise this, i.e. pos += speed ...;
   props.pos.x += props.speed.x * sync;
   props.pos.y += props.speed.y * sync;
   props.pos.z += props.speed.z * sync;
-
-  //Block* blockptr;
-  //int hit = level.checkCollisionSimple(blockptr);
 }
 
 void Pawn::move(Level &level, double sync)

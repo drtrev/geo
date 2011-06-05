@@ -265,6 +265,15 @@ void Clientcontrol::process(Unit unit)
       // see if buffer is filling up...
       if (talk.getChunksRecvd() > 2) out << VERBOSE_LOUD << "Buffered " << talk.getChunksRecvd() << " chunks\n"; // TODO remove this
       break;
+    case UNIT_GENERIC:
+      // used for deactivating bullets for now
+      if (unit.generic.objectid < 0 || unit.generic.objectid > BULLETS_MAX - 1) {
+        out << VERBOSE_LOUD << "Error: generic unit, bad id: " << unit.generic.objectid << "\n";
+      }else{
+        bullet[unit.generic.objectid].setActive(false);
+        out << VERBOSE_QUIET << "bullet deactivated.\n";
+      }
+      break;
     case UNIT_LOGOFF:
       if (users > 0) {
         if (myId == unit.logoff.id) {

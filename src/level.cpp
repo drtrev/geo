@@ -773,41 +773,41 @@ int Level::checkCollision(Props &props)
   return 0;
 }
 
-/*int Level::checlCollisionSimple(Vector origpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale)
+int Level::checkCollisionSimple(Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale)
 {
   if (x < 0 || y < 0 || z < 0 ||
       x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
       z >= BLOCKARRAY_DEPTH)
   {
+    // should only happen in top level
     cout << "Bullet gone out" << endl;
     return 2;
   }else{
     if (blocks->b[x][y][z].state == BLOCK_EMPTY) {
       return 0; // no hit
 
-      // TODO XXX working here
-      // create a child
-      blocks->b[x][y][z].children = new BlockArray;
-      testallocs++;
-      blocks->b[x][y][z].state = BLOCK_CHILDREN;
     }
     if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
+      if (scale < 0.2) {
+        cerr << "Error: detected another child at 0.1 level" << endl;
+        return 0;
+      }
 
       bool output = false;
-      //if (rand()%50 < 2) output = true;
 
       // transform original x y and z to children's block coords
-      //Vector torigin = parentorigin;
-      //torigin.x += x * scale;
-      //torigin.y += y * scale;
-      //torigin.z += z * scale;
+      Vector torigin = parentorigin;
+      torigin.x += x * scale;
+      torigin.y += y * scale;
+      torigin.z += z * scale;
 
       float scale = 10.0;
       Vector tpos;
-      tpos.x = worldPos.x - x * scale;
-      tpos.y = worldPos.y - y * scale;
-      tpos.z = worldPos.z - z * scale;
+      tpos.x = localpos.x - x * scale;
+      tpos.y = localpos.y - y * scale;
+      tpos.z = localpos.z - z * scale;
       scale /= 10.0;
+
       Vector blockpos = tpos / scale;
 
       int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
@@ -821,22 +821,25 @@ int Level::checkCollision(Props &props)
 
       BlockArray* b2 = blocks->b[x][y][z].children;
 
-      if (tx < 0 || ty < 0 || tz < 0
-        || tx > BLOCKARRAY_WIDTH || ty > BLOCKARRAY_HEIGHT || tz > BLOCKARRAY_DEPTH) {
-        cerr << "Creation of subblocks out of bounds" << endl;
-      }else{
-        if (b2->b[tx][ty][tz].state == BLOCK_EMPTY) {
-          b2->b[tx][ty][tz].state = BLOCK_SOLID;
-          return true; // created
-        }
-      }
+      return checkCollisionSimple(tpos, torigin, tx, ty, tz, b2, scale);
 
+    }else if (blocks->b[x][y][z].state == BLOCK_SOLID) {
+      cout << "HIT!" << endl;
+      return 1;
+      // TODO XXX working here
+      // create a child
+      //blocks->b[x][y][z].children = new BlockArray;
+      //testallocs++;
+      //blocks->b[x][y][z].state = BLOCK_CHILDREN;
     }
 
   }
-}*/
 
-/*bool Level::checkCollisionSimple(Vector worldPos)
+  cerr << "Error: shouldn't get here" << endl;
+  return 0;
+}
+
+int Level::checkCollisionSimple(Vector worldPos)
 // round of player position and put a block there if poss
 {
   // find block we're in
@@ -846,15 +849,15 @@ int Level::checkCollision(Props &props)
   
   blockpos = worldPos / 10;
 
-  BlockArray* blocks = top;
-
   int x, y, z;
   x = (int) blockpos.x, y = (int) blockpos.y, z = (int) blockpos.z;
 
-  checkCollisionSimple(worldPos, x, y, z);
+  Vector origin;
 
-  return false; // not created
-}*/
+  int hit = checkCollisionSimple(worldPos, origin, x, y, z, top, 10);
+
+  return hit; // not created
+}
 
 /*int Level::checkCollisionBasic(Props &props)
 {

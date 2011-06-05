@@ -345,8 +345,23 @@ void Servercontrol::physicsloop()
     keyset[i] &= ~(KEYS_NEXT | KEYS_BACK | KEYS_FIRE);
   }
 
-  for (int i = 0; i < BULLETS_MAX; i++)
-    if (bullet[i].getActive()) bullet[i].moveSimple(level, sync);
+  for (int i = 0; i < BULLETS_MAX; i++) {
+    if (bullet[i].getActive()) {
+      bullet[i].moveSimple(level, sync);
+      int hit = level.checkCollisionSimple(bullet[i].getPos());
+      if (hit > 0) {
+        bullet[i].setActive(false);
+        Unit unit;
+        unit.flag = UNIT_GENERIC;
+        unit.generic.from = 0;
+        unit.generic.to = 0;
+        unit.generic.objectid = i;
+        unit.generic.info_i = 0; // deactive
+        unit.generic.info_f = 0;
+        net.addUnitAll(unit, server, -1);
+      }
+    }
+  }
 
   // for fun
   /*geo::Vector rot(0, 0, 0.1);
