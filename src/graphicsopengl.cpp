@@ -427,47 +427,51 @@ void GraphicsOpenGL::drawBlock(int x, int y, int z, float scale)
   else if (scale > 0.5) glColor4f(0, .7, 0, 1);
   else glColor4f(0, 0, 0.7, 1);
 
-  glTranslatef(x + 0.5, y + 0.5, z + 0.5);
+  //if (scale < 0.2) { // temp hack to hide small blocks to see collision walls
 
-  // should use facet tables here, but it's only one object so not too fussed
-  float normal = 1*scale; // need normals to match the scale, so they're always unit length
-  glBegin(GL_QUADS);
-  glNormal3f(0, 0, normal); // front
-  glVertex3f(-0.5, -0.5, 0.5);
-  glVertex3f(0.5, -0.5, 0.5);
-  glVertex3f(0.5, 0.5, 0.5);
-  glVertex3f(-0.5, 0.5, 0.5);
+    glTranslatef(x + 0.5, y + 0.5, z + 0.5);
 
-  glNormal3f(0, 0, -normal); // back
-  glVertex3f(0.5, -0.5, -0.5);
-  glVertex3f(-0.5, -0.5, -0.5);
-  glVertex3f(-0.5, 0.5, -0.5);
-  glVertex3f(0.5, 0.5, -0.5);
+    // should use facet tables here, but it's only one object so not too fussed
+    float normal = 1*scale; // need normals to match the scale, so they're always unit length
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, normal); // front
+    glVertex3f(-0.5, -0.5, 0.5);
+    glVertex3f(0.5, -0.5, 0.5);
+    glVertex3f(0.5, 0.5, 0.5);
+    glVertex3f(-0.5, 0.5, 0.5);
 
-  glNormal3f(0, normal, 0); // top
-  glVertex3f(-0.5, 0.5, 0.5);
-  glVertex3f(0.5, 0.5, 0.5);
-  glVertex3f(0.5, 0.5, -0.5);
-  glVertex3f(-0.5, 0.5, -0.5);
+    glNormal3f(0, 0, -normal); // back
+    glVertex3f(0.5, -0.5, -0.5);
+    glVertex3f(-0.5, -0.5, -0.5);
+    glVertex3f(-0.5, 0.5, -0.5);
+    glVertex3f(0.5, 0.5, -0.5);
 
-  glNormal3f(0, -normal, 0); // bottom
-  glVertex3f(0.5, -0.5, 0.5);
-  glVertex3f(-0.5, -0.5, 0.5);
-  glVertex3f(-0.5, -0.5, -0.5);
-  glVertex3f(0.5, -0.5, -0.5);
+    glNormal3f(0, normal, 0); // top
+    glVertex3f(-0.5, 0.5, 0.5);
+    glVertex3f(0.5, 0.5, 0.5);
+    glVertex3f(0.5, 0.5, -0.5);
+    glVertex3f(-0.5, 0.5, -0.5);
 
-  glNormal3f(-normal, 0, 0); // left
-  glVertex3f(-0.5, -0.5, -0.5);
-  glVertex3f(-0.5, -0.5, 0.5);
-  glVertex3f(-0.5, 0.5, 0.5);
-  glVertex3f(-0.5, 0.5, -0.5);
+    glNormal3f(0, -normal, 0); // bottom
+    glVertex3f(0.5, -0.5, 0.5);
+    glVertex3f(-0.5, -0.5, 0.5);
+    glVertex3f(-0.5, -0.5, -0.5);
+    glVertex3f(0.5, -0.5, -0.5);
 
-  glNormal3f(normal, 0, 0); // right
-  glVertex3f(0.5, -0.5, 0.5);
-  glVertex3f(0.5, -0.5, -0.5);
-  glVertex3f(0.5, 0.5, -0.5);
-  glVertex3f(0.5, 0.5, 0.5);
-  glEnd();
+    glNormal3f(-normal, 0, 0); // left
+    glVertex3f(-0.5, -0.5, -0.5);
+    glVertex3f(-0.5, -0.5, 0.5);
+    glVertex3f(-0.5, 0.5, 0.5);
+    glVertex3f(-0.5, 0.5, -0.5);
+
+    glNormal3f(normal, 0, 0); // right
+    glVertex3f(0.5, -0.5, 0.5);
+    glVertex3f(0.5, -0.5, -0.5);
+    glVertex3f(0.5, 0.5, -0.5);
+    glVertex3f(0.5, 0.5, 0.5);
+    glEnd();
+  //}
+
   glPopMatrix();
 }
 

@@ -508,11 +508,14 @@ void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentor
       wallpos += parentorigin;
       // TODO optimise this so it adds one long wall when blocks are adjacent
       addWalls(walls, wallpos, scale, pawnRadius);
+      //if (scale < 0.2) {
+      //  cout << "Adding wall at: " << wallpos << ", radius: " << pawnRadius << endl;
+      //}
     }
 
     if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
 
-      bool output = true;
+      bool output = false;
 
       // transform original x y and z to children's block coords
       Vector torigin = parentorigin;
@@ -531,7 +534,10 @@ void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentor
       int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
       tx = (int) blockpos.x, ty = (int) blockpos.y, tz = (int) blockpos.z;
 
-      if (output) cout << "scale: " << scale << ", tx: " << tx << ", ty: " << ty << ", tz: " << tz << endl;
+      if (output) { cout << "scale: " << scale << ", tx,y,z: " << tx << "," << ty << "," << tz
+        << ", tpos.x,y,z: " << tpos.x << "," << tpos.y << "," << tpos.z
+        << ", torigin.x,y,z: " << torigin.x << "," << torigin.y << "," << torigin.z << endl;
+      }
 
       // now we've got the transformed coords,
       // are they actually within this big block?
@@ -747,7 +753,13 @@ int Level::checkCollision(Props &props)
   std::vector <Wall> walls = getWalls(props);
   collisionWalls = walls; // for display
 
-  //if (rand()%200 < 2) cout << "numwalls: " << walls.size() << endl;
+  if (rand()%200 < 2) {
+    //cout << "numwalls: " << walls.size() << endl;
+    // give an example:
+    int n = rand() % ((int) walls.size());
+    cout << "example wall: " << walls[n].corner1 << ";" << walls[n].corner2 << ";" << walls[n].corner3 << ";" << walls[n].corner4 << endl;
+  }
+
   bool hit;
   int numHit = 0;
   Vector collisionPoint;
