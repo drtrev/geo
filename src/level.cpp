@@ -543,10 +543,25 @@ void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentor
       // are they actually within this big block?
       // if not then it'll be detected as out of bounds
 
-      for (int checkz = tz - 1; checkz < tz + 2; checkz++)
-        for (int checky = ty - 1; checky < ty + 2; checky++)
-          for (int checkx = tx - 1; checkx < tx + 2; checkx++)
-            getWalls(walls, tpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
+      // -1 to < +2 is not enough for small blocks with a pawnRadius of 0.3
+      // need to take pawnRadius and perhaps scale into account
+      // hack for now TODO
+      // XXX WORKING HERE
+
+      if (scale > 0.2) {
+        for (int checkz = tz - 1; checkz < tz + 2; checkz++)
+          for (int checky = ty - 1; checky < ty + 2; checky++)
+            for (int checkx = tx - 1; checkx < tx + 2; checkx++)
+              getWalls(walls, tpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
+              // warning: check above line matches hack below
+      }else{
+        if (rand() % 100 == 0) cout << "Making loads of walls" << endl;
+        for (int checkz = tz - 3; checkz < tz + 4; checkz++)
+          for (int checky = ty - 3; checky < ty + 4; checky++)
+            for (int checkx = tx - 3; checkx < tx + 4; checkx++)
+              getWalls(walls, tpos, torigin, checkx, checky, checkz, blocks->b[x][y][z].children, scale, pawnRadius);
+              // warning: check above line matches hack above
+      }
 
       //for (int checkz = tz - 2; checkz < tz + 3; checkz++)
         //for (int checky = ty - 2; checky < ty + 3; checky++)
@@ -583,6 +598,7 @@ std::vector <Wall> Level::getWalls(Props &props)
     for (int checky = y - 1; checky < y + 2; checky++)
       for (int checkx = x - 1; checkx < x + 2; checkx++)
         getWalls(walls, props.pos, origin, checkx, checky, checkz, top, 10, props.radius);
+        //getWalls(walls, props.pos, origin, checkx, checky, checkz, top, 10, 0);
 
   return walls;
 }
