@@ -272,9 +272,12 @@ void Clientcontrol::process(Unit unit)
       }else{
         // pos will have been received first
         int hit = level.checkCollisionSimple(bullet[unit.generic.objectid].getPos());
-        if (hit == 0) out << VERBOSE_LOUD << "Error: we're out of sync. No hit here!\n";
+        if (hit == 0) {
+          out << VERBOSE_LOUD << "--------------Error: we're out of sync. No hit here! bulletid: " << unit.generic.objectid << "\n";
+          std::cout << bullet[unit.generic.objectid].getPos() << std::endl;
+        }
         bullet[unit.generic.objectid].setActive(false);
-        out << VERBOSE_QUIET << "bullet deactivated.\n";
+        out << VERBOSE_QUIET << "bullet deactivated. bulletid: " << unit.generic.objectid << "\n";
       }
       break;
     case UNIT_LOGOFF:
@@ -318,7 +321,7 @@ void Clientcontrol::process(Unit unit)
         bullet[id].setX(unit.position.x);
         bullet[id].setY(unit.position.y);
         bullet[id].setZ(unit.position.z);
-        out << VERBOSE_QUIET << "received bullet pos\n";
+        out << VERBOSE_QUIET << "received bullet pos for bulletid: " << id << "\n";
 
       }else if (unit.position.id > IDHACK_BULLETROT_MIN - 1 && unit.position.id < IDHACK_BULLETROT_MAX) {
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
@@ -326,7 +329,7 @@ void Clientcontrol::process(Unit unit)
         bullet[id].setRot(rot);
         bullet[id].setMove(bulletvec, level.getRot());
         bullet[id].setActive(true);
-        out << VERBOSE_QUIET << "created bullet\n";
+        out << VERBOSE_QUIET << "created bullet: " << id << "\n";
 
       }else if (unit.position.id == IDHACK_CREATE) {
         // create block

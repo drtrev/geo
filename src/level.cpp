@@ -769,12 +769,12 @@ int Level::checkCollision(Props &props)
   std::vector <Wall> walls = getWalls(props);
   collisionWalls = walls; // for display
 
-  if (rand()%200 < 2) {
+  //if (rand()%200 < 2) {
     //cout << "numwalls: " << walls.size() << endl;
     // give an example:
-    int n = rand() % ((int) walls.size());
-    cout << "example wall: " << walls[n].corner1 << ";" << walls[n].corner2 << ";" << walls[n].corner3 << ";" << walls[n].corner4 << endl;
-  }
+    //int n = rand() % ((int) walls.size());
+    //cout << "example wall: " << walls[n].corner1 << ";" << walls[n].corner2 << ";" << walls[n].corner3 << ";" << walls[n].corner4 << endl;
+  //}
 
   bool hit;
   int numHit = 0;

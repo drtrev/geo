@@ -17,3 +17,7 @@ make sloped walls for small blocks, but have them inside block itelf, overlappin
 
 check bullets are appearing properly in server, then maybe make 'createBullet()' and put it in controller,
 and get client to also call it
+
+
+rounded bullet position, but still got some out of sync problems - client has block, server not. This could be because
+buffer was full - check this crazy bullet spawning method when moving.

@@ -287,10 +287,17 @@ int Servercontrol::createBullet(geo::Vector pos, geo::Vector rot)
     bullet[nextbull].setRot(rot);
     bullet[nextbull].setMove(bulletvec, level.getRot());
     bullet[nextbull].setActive(true);
-    out << VERBOSE_LOUD << "fired\n";
+    out << VERBOSE_LOUD << "fired: " << nextbull << "\n";
   }
 
   return nextbull;
+}
+
+geo::Vector Servercontrol::roundPos(geo::Vector pos)
+{
+  // round down to nearest mm
+  geo::Vector rounded( ((int) (pos.x*1000)) / 1000.0, ((int) (pos.y*1000)) / 1000.0, ((int) (pos.z*1000)) / 1000.0);
+  return rounded;
 }
 
 void Servercontrol::physicsloop()
@@ -335,7 +342,7 @@ void Servercontrol::physicsloop()
         unit.position.y = player[i].getRot().y;
         unit.position.z = player[i].getRot().z;
         net.addUnitAll(unit, server, -1);
-        out << VERBOSE_QUIET << "Sent bullet position\n";
+        out << VERBOSE_QUIET << "Sent bullet position (created): " << bullid << "\n";
       }
     }
 
@@ -348,15 +355,26 @@ void Servercontrol::physicsloop()
   for (int i = 0; i < BULLETS_MAX; i++) {
     if (bullet[i].getActive()) {
       bullet[i].moveSimple(level, sync);
-      int hit = level.checkCollisionSimple(bullet[i].getPos());
+
+      // if this doesn't send exactly the same position to client then
+      // it won't work. Note it's rounded to 4 decimal places in motlab
+      // see net.cpp writeFloat2 (and unitToBytes).
+      // So here we round to 3 before checking and sending rounded position
+      geo::Vector roundpos = roundPos(bullet[i].getPos());
+
+      //int hit = level.checkCollisionSimple(bullet[i].getPos());
+      int hit = level.checkCollisionSimple(roundpos);
       if (hit > 0) {
         bullet[i].setActive(false);
         Unit unit;
         unit.flag = UNIT_POSITION;
         unit.position.id = IDHACK_BULLETPOS_MIN + i;
-        unit.position.x = bullet[i].getPos().x;
-        unit.position.y = bullet[i].getPos().y;
-        unit.position.z = bullet[i].getPos().z;
+        //unit.position.x = bullet[i].getPos().x;
+        //unit.position.y = bullet[i].getPos().y;
+        //unit.position.z = bullet[i].getPos().z;
+        unit.position.x = roundpos.x;
+        unit.position.y = roundpos.y;
+        unit.position.z = roundpos.z;
         net.addUnitAll(unit, server, -1);
         unit.flag = UNIT_GENERIC;
         unit.generic.from = 0;
@@ -365,6 +383,9 @@ void Servercontrol::physicsloop()
         unit.generic.info_i = 0; // deactive
         unit.generic.info_f = 0;
         net.addUnitAll(unit, server, -1);
+        //std::cout << "bullet " << i << " hit at pos: ";
+        //std::cout << bullet[i].getPos() << std::endl;
+        //std::cout << "roundpos: " << roundpos << std::endl;
       }
     }
   }

@@ -50,6 +50,8 @@ class Servercontrol : public Controller {
 
     Map map[MAX_CLIENTS]; /**< The map objects, one for each client. */
 
+    geo::Vector roundPos(geo::Vector);
+
   public:
     Servercontrol(); /**< Constructor. */
     ~Servercontrol(); /**< Destructor. */
