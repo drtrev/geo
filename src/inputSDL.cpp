@@ -125,10 +125,12 @@ int InputSDL::check(int keys, int &mousexrel, int &mouseyrel, int windowWidth, i
       case SDL_MOUSEBUTTONDOWN:
         key = mapMouse(event.button.button, true);
         keys |= key;
+        std::cout << "Mouse button down" << std::endl;
         break;
       case SDL_MOUSEBUTTONUP:
         key = mapMouse(event.button.button, false);
         keys &= ~key;
+        std::cout << "Mouse button up" << std::endl;
         break;
       case SDL_VIDEORESIZE:
         std::cerr << "Resize event received" << std::endl;

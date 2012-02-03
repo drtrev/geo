@@ -38,6 +38,7 @@ class Servercontrol : public Controller {
     InputSDL input; /**< Input instance. */
 
     timeval lastSent; /**< Time last transmitted a state update. */
+    timeval lastBullet; /**< Time last created a bullet. */
 
     int keyset[MAX_CLIENTS]; /**< Keys received from clients. */
     int keys; /**< Keys pressed by server user. */

@@ -21,3 +21,6 @@ and get client to also call it
 
 rounded bullet position, but still got some out of sync problems - client has block, server not. This could be because
 buffer was full - check this crazy bullet spawning method when moving.
+OK, made timer for bullets.
+
+Hey, try this: only make sloped wall if there's not a block above?

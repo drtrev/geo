@@ -80,6 +80,8 @@ void Servercontrol::go()
 
   lastSent.tv_sec = 0;
   lastSent.tv_usec = 0;
+  lastBullet.tv_sec = 0;
+  lastBullet.tv_usec = 0;
 
   // loop frequencies in Hz (calls per second)
   int inputfreq = 20;
@@ -245,7 +247,7 @@ void Servercontrol::networkloop()
   // which would mean every so often an update is skipped (overwritten) and
   // would result in jumpy/inconsistent movement!
 
-  //if (elapsed.tv_sec > 0 || elapsed.tv_usec > 33333) { // was 50000
+  //if (elapsed.tv_sec > 0 || elapsed.tv_usec > 33333) { // was 50000 -- eh, usec not big enough here??
     //lastSent = timer.getCurrent();
 
     // send map position
@@ -317,39 +319,51 @@ void Servercontrol::physicsloop()
       }
     }
     if (keyset[i] & KEYS_FIRE) {
-      int bullid = createBullet(player[i].getPos(), player[i].getRot());
-      if (bullid > -1) {
-        // send bullet pos and rot
-        // in case we later send out levelrot in a different loop,
-        // make sure client has it up to date
-        geo::Vector temp = level.getRot();
-        Unit unit;
-        unit.flag = UNIT_POSITION;
-        unit.position.id = IDHACK_LEVELROT;
-        unit.position.x = temp.x;
-        unit.position.y = temp.y;
-        unit.position.z = temp.z;
-        net.addUnitAll(unit, server, -1);
-        unit.flag = UNIT_POSITION;
-        unit.position.id = IDHACK_BULLETPOS_MIN + bullid;
-        unit.position.x = player[i].getPos().x;
-        unit.position.y = player[i].getPos().y;
-        unit.position.z = player[i].getPos().z;
-        net.addUnitAll(unit, server, -1);
-        unit.flag = UNIT_POSITION;
-        unit.position.id = IDHACK_BULLETROT_MIN + bullid;
-        unit.position.x = player[i].getRot().x;
-        unit.position.y = player[i].getRot().y;
-        unit.position.z = player[i].getRot().z;
-        net.addUnitAll(unit, server, -1);
-        out << VERBOSE_QUIET << "Sent bullet position (created): " << bullid << "\n";
+      // check we've delayed enough
+      timeval elapsed;
+      elapsed = timer.elapsed(lastBullet);
+
+      // TODO note here not to be faster than receiving end (client) is processing the network or
+      // if that's rubbish then remove this comment
+      //
+      if (elapsed.tv_sec > 0 || elapsed.tv_usec > 500000) {
+        lastBullet = timer.getCurrent();
+
+        int bullid = createBullet(player[i].getPos(), player[i].getRot());
+        if (bullid > -1) {
+          // send bullet pos and rot
+          // in case we later send out levelrot in a different loop,
+          // make sure client has it up to date
+          geo::Vector temp = level.getRot();
+          Unit unit;
+          unit.flag = UNIT_POSITION;
+          unit.position.id = IDHACK_LEVELROT;
+          unit.position.x = temp.x;
+          unit.position.y = temp.y;
+          unit.position.z = temp.z;
+          net.addUnitAll(unit, server, -1);
+          unit.flag = UNIT_POSITION;
+          unit.position.id = IDHACK_BULLETPOS_MIN + bullid;
+          unit.position.x = player[i].getPos().x;
+          unit.position.y = player[i].getPos().y;
+          unit.position.z = player[i].getPos().z;
+          net.addUnitAll(unit, server, -1);
+          unit.flag = UNIT_POSITION;
+          unit.position.id = IDHACK_BULLETROT_MIN + bullid;
+          unit.position.x = player[i].getRot().x;
+          unit.position.y = player[i].getRot().y;
+          unit.position.z = player[i].getRot().z;
+          net.addUnitAll(unit, server, -1);
+          out << VERBOSE_QUIET << "Sent bullet position (created): " << bullid << "\n";
+        }
       }
-    }
+    } // end KEYS_FIRE
 
     //picturecontrol.input(keyset[i], net, server); // pass input for each player
 
     // remove next back and fire (single effect) keys from keyset because they've been dealt with now
-    keyset[i] &= ~(KEYS_NEXT | KEYS_BACK | KEYS_FIRE);
+    // this doesn't work properly, because they're not removed from client and they're sent again when something else is pressed
+    //keyset[i] &= ~(KEYS_NEXT | KEYS_BACK | KEYS_FIRE);
   }
 
   for (int i = 0; i < BULLETS_MAX; i++) {
