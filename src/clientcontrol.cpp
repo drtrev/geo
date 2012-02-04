@@ -276,6 +276,7 @@ void Clientcontrol::process(Unit unit)
           out << VERBOSE_LOUD << "--------------Error: we're out of sync. No hit here! bulletid: " << unit.generic.objectid << "\n";
           std::cout << bullet[unit.generic.objectid].getPos() << std::endl;
         }
+        explode(bullet[unit.generic.objectid].getPos());
         bullet[unit.generic.objectid].setActive(false);
         out << VERBOSE_QUIET << "bullet deactivated. bulletid: " << unit.generic.objectid << "\n";
       }

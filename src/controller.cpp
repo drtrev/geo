@@ -85,3 +85,25 @@ void Controller::initShared(verboseEnum verbosity, bool fullscreen)
   net.setAudioDataSize(talk.getChunkBytes()); // TODO when use UDP remove this
 }
 
+void Controller::explode(geo::Vector centre)
+{
+  float radius = 0.6;
+  // TODO precalculate which blocks are effected
+
+  // go through from centre
+  for (float z = centre.z - radius; z < centre.z + radius; z+=0.1) {
+    for (float y = centre.y - radius; y < centre.y + radius; y+=0.1) {
+      for (float x = centre.x - radius; x < centre.x + radius; x+=0.1) {
+        // is it within radius, i.e. directly
+        geo::Vector current(x, y, z);
+        geo::Vector distvec = current - centre;
+        float dist = sqrt(distvec.x * distvec.x + distvec.y * distvec.y + distvec.z * distvec.z);
+        if (dist < radius) {
+          level.checkCollisionSimple(current);
+        }
+      }
+    }
+  }
+
+}
+

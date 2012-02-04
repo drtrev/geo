@@ -88,6 +88,8 @@ class Controller {
 
     void initShared(verboseEnum, bool); /**< Initialise everything that's relevant to client and server. */
 
+    void explode(geo::Vector);
+
     /**
      * Initialise everything. TODO change docs
      *

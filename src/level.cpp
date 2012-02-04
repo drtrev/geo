@@ -910,7 +910,7 @@ int Level::checkCollisionSimple(Vector localpos, Vector parentorigin, int x, int
 }
 
 int Level::checkCollisionSimple(Vector worldPos)
-// round of player position and put a block there if poss
+// round off player position and put a block there if poss
 {
   // find block we're in
   // top level

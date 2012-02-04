@@ -374,10 +374,10 @@ void Servercontrol::physicsloop()
       // it won't work. Note it's rounded to 4 decimal places in motlab
       // see net.cpp writeFloat2 (and unitToBytes).
       // So here we round to 3 before checking and sending rounded position
-      geo::Vector roundpos = roundPos(bullet[i].getPos());
+      geo::Vector roundedpos = roundPos(bullet[i].getPos());
 
       //int hit = level.checkCollisionSimple(bullet[i].getPos());
-      int hit = level.checkCollisionSimple(roundpos);
+      int hit = level.checkCollisionSimple(roundedpos);
       if (hit > 0) {
         bullet[i].setActive(false);
         Unit unit;
@@ -386,9 +386,9 @@ void Servercontrol::physicsloop()
         //unit.position.x = bullet[i].getPos().x;
         //unit.position.y = bullet[i].getPos().y;
         //unit.position.z = bullet[i].getPos().z;
-        unit.position.x = roundpos.x;
-        unit.position.y = roundpos.y;
-        unit.position.z = roundpos.z;
+        unit.position.x = roundedpos.x;
+        unit.position.y = roundedpos.y;
+        unit.position.z = roundedpos.z;
         net.addUnitAll(unit, server, -1);
         unit.flag = UNIT_GENERIC;
         unit.generic.from = 0;
@@ -400,6 +400,7 @@ void Servercontrol::physicsloop()
         //std::cout << "bullet " << i << " hit at pos: ";
         //std::cout << bullet[i].getPos() << std::endl;
         //std::cout << "roundpos: " << roundpos << std::endl;
+        explode(roundedpos);
       }
     }
   }
