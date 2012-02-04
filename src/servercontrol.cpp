@@ -133,6 +133,7 @@ void Servercontrol::doloop(int delay, timeval &lasttime, void (Servercontrol::*l
     // n/w etc.)
     lasttime = timer.getCurrent();
     sync = elapsed.tv_sec + elapsed.tv_usec / 1000000.0;
+    if (rand()%200 == 0) std::cout << "FPS: " << (1/sync) << "\n";
     (*this.*loopPtr)();
   }
 }
