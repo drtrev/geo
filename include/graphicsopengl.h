@@ -92,6 +92,13 @@ class GraphicsOpenGL : public Graphics {
 
     void flip(); /**< Flip image. */
 
+    bool initTTF();
+    struct TTf {
+      TTF_Font *font;
+      SDL_Surface *text;
+      SDL_Color text_color;
+    } ttf;
+
   public:
     GraphicsOpenGL(); /**< Constructor. */
 

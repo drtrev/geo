@@ -17,6 +17,7 @@ INCLUDE_DIRECTORIES( ../include
 /usr/not-backed-up/work/oglft-0.9/bin/include/oglft
 /usr/not-backed-up/work/openal-soft-1.7.411/include 
 /usr/include/freetype2 /usr/local/include/oglft /usr/include/ImageMagick )
+# TODO remove oglft
 
 LINK_DIRECTORIES( /usr/not-backed-up/work/oglft-0.9/lib
 ../../motlab-old/motlab/trunk/build/lib

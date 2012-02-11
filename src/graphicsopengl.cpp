@@ -57,6 +57,37 @@ GraphicsOpenGL::GraphicsOpenGL()
 
 }
 
+bool GraphicsOpenGL::initTTF()
+{
+  // init SDL_ttf
+  if (TTF_Init() < 0) {
+    cerr << "Could not initialise TTF: " << TTF_GetError() << endl;
+    return false;
+  }
+  // Load a font
+  ttf.font = TTF_OpenFont("FreeSans.ttf", 24);
+  if (font == NULL)
+  {
+    cerr << "TTF_OpenFont() Failed: " << TTF_GetError() << endl;
+    //TTF_Quit();
+    //SDL_Quit();
+    //exit(1);
+  }
+  // Write text to surface
+  ttf.text_color = {255, 255, 255};
+  ttf.text = TTF_RenderText_Solid(ttf.font,
+      "A journey of a thousand miles begins with a single step.",
+      ttf.text_color);
+
+  if (ttf.text == NULL)
+  {
+    cerr << "TTF_RenderText_Solid() Failed: " << TTF_GetError() << endl;
+    //TTF_Quit();
+    //SDL_Quit();
+    //exit(1);
+  }
+}
+
 bool GraphicsOpenGL::init(Outverbose &o, WindowInfo w, const char* font, int fontsize)
 {
   initShared(o);
@@ -74,6 +105,9 @@ bool GraphicsOpenGL::init(Outverbose &o, WindowInfo w, const char* font, int fon
   //face->setCharacterRotationY( 0 );
   //face->setCharacterRotationZ( 0 );
   //face->setStringRotation( 0 );
+
+  // Now using SDL_ttf library
+  initTTF();
 
   //window = new WindowGlut;
   window = new WindowSDL;
@@ -137,6 +171,8 @@ void GraphicsOpenGL::setLightPositions()
 void GraphicsOpenGL::kill()
 {
   cout << "Killing graphics..." << endl;
+  TTF_Quit();
+
   if (window->getWid() > -1) window->destroy();
   delete window;
 #ifndef _MSC_VER
@@ -602,6 +638,7 @@ void GraphicsOpenGL::drawText(GraphicsInfo g)
 {
 #ifndef _MSC_VER
 #ifndef NOOGLFT
+  // TODO remove this, not available for win
   if (g.visible) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -626,6 +663,18 @@ void GraphicsOpenGL::drawText(GraphicsInfo g)
   }
 #endif
 #endif
+  // SDL_ttf
+  if (g.visible) {
+    // TODO XXX WORKING HERE. Can't blit surface when using openGL. See:
+    // http://stackoverflow.com/questions/5289447/using-sdl-ttf-with-opengl
+    // http://www.gamedev.net/topic/284259-for-reference-using-sdl_ttf-with-opengl/
+    // Apply the text to the display
+    if (SDL_BlitSurface(ttf.text, NULL, display, NULL) != 0)
+    {
+      cerr << "SDL_BlitSurface() Failed: " << SDL_GetError() << endl;
+      break;
+    }
+  }
 }
 
 void GraphicsOpenGL::drawViewbox(double posX, double posY, double scale, double thumbOffsetX, double thumbOffsetY, double thumbScale, float r, float g, float b, float a)
