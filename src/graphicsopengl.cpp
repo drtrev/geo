@@ -73,15 +73,20 @@ bool GraphicsOpenGL::initTTF()
     SDL_Quit();
     exit(1);
   }
-  // Write text to surface
-  ttf.text_color.r = 255;
-  ttf.text_color.g = 255;
-  ttf.text_color.b = 255;
-  ttf.text = TTF_RenderText_Solid(ttf.font,
-      "Hello world there how are you today testing 123",
-      ttf.text_color);
 
-  if (ttf.text == NULL)
+  // Write text to surface
+
+  ttf.text = "";
+  ttf.color.r = 255;
+  ttf.color.g = 255;
+  ttf.color.b = 255;
+
+  ttf.textsurf = NULL;
+  /*ttf.textsurf = TTF_RenderText_Solid(ttf.font,
+      ttf.text.c_str(),
+      ttf.color);
+
+  if (ttf.textsurf == NULL)
   {
     cerr << "TTF_RenderText_Solid() Failed: " << TTF_GetError() << endl;
     TTF_Quit();
@@ -89,7 +94,12 @@ bool GraphicsOpenGL::initTTF()
     exit(1);
   }else{
     cout << "Made text surface" << endl;
-  }
+  }*/
+
+  ttf.fmtsurf = 0;
+
+  ttf.texture = 0;
+  ttf.generated = false;
 
   return true;
 }
@@ -671,89 +681,76 @@ void GraphicsOpenGL::drawText(GraphicsInfo g)
 #endif
   // SDL_ttf
   if (g.visible) {
-    // TODO XXX WORKING HERE. Can't blit surface when using openGL. See:
+    // These were useful, especially second one
     // http://stackoverflow.com/questions/5289447/using-sdl-ttf-with-opengl
     // http://www.gamedev.net/topic/284259-for-reference-using-sdl_ttf-with-opengl/
-    // Apply the text to the display
-    /*if (SDL_BlitSurface(ttf.text, NULL, display, NULL) != 0)
-    {
-      cerr << "SDL_BlitSurface() Failed: " << SDL_GetError() << endl;
-      break;
-    }*/
-    //SDL_PixelFormat* fmt = ttf.text->format;
-    //cout << "bpp: " << (int) bpp << endl;
-    //GLint texfmt = 0;
 
-    //if (fmt->BytesPerPixel == 1) {
-      //if (fmt->Rmask == 0x000000ff) {
-      //  texfmt = GL_RGBA;
-      //}else{
-       // texfmt = GL_BGRA;
-      //  cout << "ho!" << endl;
-      //}}
-    //}
-    //texfmt = GL_RGBA;
-    //texfmt = GL_BGRA;
-
-    // TODO only generate texture when text changes
-    static GLuint texture = 0;
-    static bool done = false;
-
-    //glEnable(GL_BLEND); // TODO remove
-    if (!done) {
+    if (g.text != "" && g.text != ttf.text) {
 
       int width = 256;
       int height = 32;
-      SDL_Surface* intermediary = SDL_CreateRGBSurface(0, width, height, 32, 
-          0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+
+      if (!ttf.generated)
+        ttf.fmtsurf = SDL_CreateRGBSurface(0, width, height, 32, 
+            0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+
+      if (ttf.textsurf != NULL) SDL_FreeSurface(ttf.textsurf);
+      ttf.textsurf = TTF_RenderText_Solid(ttf.font, g.text.c_str(), ttf.color);
+      if (ttf.textsurf == NULL) {
+        cerr << "TTF_RenderText_Solid() Failed: " << TTF_GetError() << endl;
+      }else{
+        SDL_BlitSurface(ttf.textsurf, 0, ttf.fmtsurf, 0);
 
 
-      //SDL_FreeSurface(ttf.text);
-      //ttf.text = TTF_RenderText_Solid(ttf.font,
-      //    "MM",
-      //    ttf.text_color);
+        if (!ttf.generated) {
+          glGenTextures(1, &(ttf.texture));
+          glBindTexture(GL_TEXTURE_2D, ttf.texture);
+          //  lod, internal format,                 border
+          //glTexImage2D(GL_TEXTURE_2D, 0, 4, ttf.textsurf->w, ttf.textsurf->h, 0,
+          //    GL_BGRA, GL_UNSIGNED_BYTE, ttf.textsurf->pixels);
+          glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+              GL_BGRA, GL_UNSIGNED_BYTE, ttf.fmtsurf->pixels);
 
-      SDL_BlitSurface(ttf.text, 0, intermediary, 0);
+          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
+          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+          glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        }
+      }
 
-
-
-      glGenTextures(1, &texture);
-      glBindTexture(GL_TEXTURE_2D, texture);
-                              //  lod, internal format,                 border
-      //glTexImage2D(GL_TEXTURE_2D, 0, 4, ttf.text->w, ttf.text->h, 0,
-      //    GL_BGRA, GL_UNSIGNED_BYTE, ttf.text->pixels);
-      glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-          GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
-
-      /* GL_NEAREST looks horrible, if scaled... */
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-      cout << "w: " << ttf.text->w << endl;
-      cout << "h: " << ttf.text->h << endl;
-      //for (int i = 0; i < 32*32; i+=4) {
-      //  cout << "Pixels: " << *((int*) (ttf.text->pixels+i)) << endl;
-      //}
-      cout << "Texture: " << texture << endl;
-      cout << "glError: " << glGetError() << endl;
-      done = true;
+      ttf.generated = true;
     }
 
+    glPushMatrix();
     glEnable(GL_BLEND);
     //done in init: glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glDisable(GL_DEPTH_TEST);
+    glBindTexture(GL_TEXTURE_2D, ttf.texture);
+    glNormal3f(0, 0, 1);
+    glColor3f(ttf.color.r/255.0, ttf.color.g/255.0, ttf.color.b/255.0);
+
+    glTranslatef(g.x, g.y, g.z);
+    glTranslatef(0, 0, g.pivotZ); // change pivot point
+    glRotatef(g.angleX, 1, 0, 0);
+    glRotatef(g.angleY, 0, 1, 0);
+    glRotatef(g.angleZ, 0, 0, 1);
+    glTranslatef(0, 0, -g.pivotZ); // change pivot point
+    glScalef(0.5, 0.5, 0.5); // get higher resolution font by choosing large fontsize then halving rendering
+    glScalef(g.scaleX, g.scaleY, g.scaleZ);
+
     float sizeX = 1, sizeY = 0.1, Z = -1;
+
     glBegin(GL_QUADS);
     glTexCoord2f(0.0, 1.0); glVertex3f(-sizeX, -sizeY, Z);
     glTexCoord2f(1.0, 1.0); glVertex3f(sizeX, -sizeY, Z);
     glTexCoord2f(1.0, 0.0); glVertex3f(sizeX, sizeY, Z);
     glTexCoord2f(0.0, 0.0); glVertex3f(-sizeX, sizeY, Z);
     glEnd();
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
+    glPopMatrix();
 
   }
 }

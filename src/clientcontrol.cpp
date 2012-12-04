@@ -439,7 +439,7 @@ void Clientcontrol::graphicsloop()
 
     //picturecontrol.draw(users);
     GraphicsInfo g = graphics->defaultInfo();
-    g.text = "hello";
+    g.text = "hello there";
     graphics->drawText(g);
 
     graphics->drawStop();

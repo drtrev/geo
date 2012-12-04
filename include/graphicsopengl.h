@@ -24,6 +24,8 @@
 
 #include "SDL_ttf.h"
 
+#include "GL/gl.h"
+
 // define NOOGLFT to compile without this library
 
 #ifndef _MSC_VER
@@ -97,9 +99,12 @@ class GraphicsOpenGL : public Graphics {
     bool initTTF();
     struct TTf {
       TTF_Font *font;
-      SDL_Surface *text;
-      SDL_Surface *intermediary;
-      SDL_Color text_color;
+      SDL_Surface *textsurf;
+      SDL_Surface *fmtsurf;
+      SDL_Color color;
+      GLuint texture;
+      bool generated;
+      std::string text;
     } ttf;
 
   public:
