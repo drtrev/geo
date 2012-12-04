@@ -65,27 +65,33 @@ bool GraphicsOpenGL::initTTF()
     return false;
   }
   // Load a font
-  ttf.font = TTF_OpenFont("FreeSans.ttf", 24);
-  if (font == NULL)
+  ttf.font = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeSans.ttf", 24);
+  if (ttf.font == NULL)
   {
     cerr << "TTF_OpenFont() Failed: " << TTF_GetError() << endl;
-    //TTF_Quit();
-    //SDL_Quit();
-    //exit(1);
+    TTF_Quit();
+    SDL_Quit();
+    exit(1);
   }
   // Write text to surface
-  ttf.text_color = {255, 255, 255};
+  ttf.text_color.r = 255;
+  ttf.text_color.g = 255;
+  ttf.text_color.b = 255;
   ttf.text = TTF_RenderText_Solid(ttf.font,
-      "A journey of a thousand miles begins with a single step.",
+      "Hello world there how are you today testing 123",
       ttf.text_color);
 
   if (ttf.text == NULL)
   {
     cerr << "TTF_RenderText_Solid() Failed: " << TTF_GetError() << endl;
-    //TTF_Quit();
-    //SDL_Quit();
-    //exit(1);
+    TTF_Quit();
+    SDL_Quit();
+    exit(1);
+  }else{
+    cout << "Made text surface" << endl;
   }
+
+  return true;
 }
 
 bool GraphicsOpenGL::init(Outverbose &o, WindowInfo w, const char* font, int fontsize)
@@ -131,7 +137,7 @@ bool GraphicsOpenGL::init(Outverbose &o, WindowInfo w, const char* font, int fon
 
     //glCullFace(GL_FRONT); // if we mirror it
     glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
+    //glEnable(GL_BLEND);
     // typical usage: modify incoming colour by it's alpha, and existing colour by 1 - source alpha
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
@@ -669,11 +675,86 @@ void GraphicsOpenGL::drawText(GraphicsInfo g)
     // http://stackoverflow.com/questions/5289447/using-sdl-ttf-with-opengl
     // http://www.gamedev.net/topic/284259-for-reference-using-sdl_ttf-with-opengl/
     // Apply the text to the display
-    if (SDL_BlitSurface(ttf.text, NULL, display, NULL) != 0)
+    /*if (SDL_BlitSurface(ttf.text, NULL, display, NULL) != 0)
     {
       cerr << "SDL_BlitSurface() Failed: " << SDL_GetError() << endl;
       break;
+    }*/
+    //SDL_PixelFormat* fmt = ttf.text->format;
+    //cout << "bpp: " << (int) bpp << endl;
+    //GLint texfmt = 0;
+
+    //if (fmt->BytesPerPixel == 1) {
+      //if (fmt->Rmask == 0x000000ff) {
+      //  texfmt = GL_RGBA;
+      //}else{
+       // texfmt = GL_BGRA;
+      //  cout << "ho!" << endl;
+      //}}
+    //}
+    //texfmt = GL_RGBA;
+    //texfmt = GL_BGRA;
+
+    // TODO only generate texture when text changes
+    static GLuint texture = 0;
+    static bool done = false;
+
+    //glEnable(GL_BLEND); // TODO remove
+    if (!done) {
+
+      int width = 256;
+      int height = 32;
+      SDL_Surface* intermediary = SDL_CreateRGBSurface(0, width, height, 32, 
+          0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+
+
+      //SDL_FreeSurface(ttf.text);
+      //ttf.text = TTF_RenderText_Solid(ttf.font,
+      //    "MM",
+      //    ttf.text_color);
+
+      SDL_BlitSurface(ttf.text, 0, intermediary, 0);
+
+
+
+      glGenTextures(1, &texture);
+      glBindTexture(GL_TEXTURE_2D, texture);
+                              //  lod, internal format,                 border
+      //glTexImage2D(GL_TEXTURE_2D, 0, 4, ttf.text->w, ttf.text->h, 0,
+      //    GL_BGRA, GL_UNSIGNED_BYTE, ttf.text->pixels);
+      glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+          GL_BGRA, GL_UNSIGNED_BYTE, intermediary->pixels);
+
+      /* GL_NEAREST looks horrible, if scaled... */
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+      cout << "w: " << ttf.text->w << endl;
+      cout << "h: " << ttf.text->h << endl;
+      //for (int i = 0; i < 32*32; i+=4) {
+      //  cout << "Pixels: " << *((int*) (ttf.text->pixels+i)) << endl;
+      //}
+      cout << "Texture: " << texture << endl;
+      cout << "glError: " << glGetError() << endl;
+      done = true;
     }
+
+    glEnable(GL_BLEND);
+    //done in init: glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    float sizeX = 1, sizeY = 0.1, Z = -1;
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0, 1.0); glVertex3f(-sizeX, -sizeY, Z);
+    glTexCoord2f(1.0, 1.0); glVertex3f(sizeX, -sizeY, Z);
+    glTexCoord2f(1.0, 0.0); glVertex3f(sizeX, sizeY, Z);
+    glTexCoord2f(0.0, 0.0); glVertex3f(-sizeX, sizeY, Z);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+
   }
 }
 

@@ -10,6 +10,8 @@ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2 -DNOOGLFT")
 MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
 
 INCLUDE_DIRECTORIES( ../include 
+/usr/local/include/SDL # for SDL_ttf
+/usr/include/SDL
 ../../motlab-old/motlab/trunk/include
 ../../../motlab/motlab/trunk/include
 ../../motlab/motlab/trunk/include
@@ -20,6 +22,7 @@ INCLUDE_DIRECTORIES( ../include
 # TODO remove oglft
 
 LINK_DIRECTORIES( /usr/not-backed-up/work/oglft-0.9/lib
+/usr/local/lib # for SDL_ttf
 ../../motlab-old/motlab/trunk/build/lib
 ../../../motlab/motlab/trunk/build/lib
 ../../motlab/motlab/trunk/build/lib
@@ -35,7 +38,7 @@ pawn player servercontrol tess textures timer windowgen windowgensdl )
 
 #SET ( map_LIBS boost_regex openal X11 motlab glut SDL Magick++ OGLFT )
 #SET ( geo_LIBS openal X11 motlab SDL Magick++ OGLFT )
-SET ( geo_LIBS openal X11 motlab SDL GL GLU )
+SET ( geo_LIBS openal X11 motlab SDL GL GLU SDL_ttf )
 
 ADD_EXECUTABLE( geo ${geo_SRCS} )
 TARGET_LINK_LIBRARIES( geo ${geo_LIBS} )
