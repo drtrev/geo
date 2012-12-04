@@ -438,9 +438,10 @@ void Clientcontrol::graphicsloop()
     //for (int i = 0; i < users; i++) user[i].draw();
 
     //picturecontrol.draw(users);
-    GraphicsInfo g = graphics->defaultInfo();
+
+    /*GraphicsInfo g = graphics->defaultInfo();
     g.text = "hello there";
-    graphics->drawText(g);
+    graphics->drawText(g);*/
 
     graphics->drawStop();
 

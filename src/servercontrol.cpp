@@ -29,12 +29,16 @@
   #include <winbase.h> // for Sleep
 #endif
 
+#include <sstream>
+
 Servercontrol::Servercontrol()
 {
   graphics = NULL;
 
   SERV = true;
   keys = 0;
+
+  statusText = "";
 }
 
 Servercontrol::~Servercontrol()
@@ -305,9 +309,14 @@ geo::Vector Servercontrol::roundPos(geo::Vector pos)
 
 void Servercontrol::physicsloop()
 {
+  std::ostringstream ss;
   for (int i = 0; i < users; i++) {
     player[i].input(keyset[i], level.getRot(), sync);
     player[i].move(level, sync);
+    statusText = "Py: ";
+    ss << player[i].getY();
+    statusText += ss.str();
+
     if (keyset[i] & KEYS_CONSTRUCT) {
       if (level.createBlock(player[i].getPos())) {
         Unit unit;
@@ -425,6 +434,9 @@ void Servercontrol::graphicsloop()
 {
   graphics->drawStart();
   level.draw(player[0].getPos(), player[0].getRot(), bullet);
+  GraphicsInfo g = graphics->defaultInfo();
+  g.text = statusText;
+  graphics->drawText(g);
   graphics->drawStop();
 
   out.refreshScreen();

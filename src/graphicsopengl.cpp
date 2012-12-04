@@ -680,12 +680,14 @@ void GraphicsOpenGL::drawText(GraphicsInfo g)
 #endif
 #endif
   // SDL_ttf
-  if (g.visible) {
+  if (g.visible && g.text != "") {
     // These were useful, especially second one
     // http://stackoverflow.com/questions/5289447/using-sdl-ttf-with-opengl
     // http://www.gamedev.net/topic/284259-for-reference-using-sdl_ttf-with-opengl/
 
-    if (g.text != "" && g.text != ttf.text) {
+    if (g.text != ttf.text) {
+
+      ttf.text = g.text;
 
       int width = 256;
       int height = 32;
@@ -695,22 +697,26 @@ void GraphicsOpenGL::drawText(GraphicsInfo g)
             0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
 
       if (ttf.textsurf != NULL) SDL_FreeSurface(ttf.textsurf);
-      ttf.textsurf = TTF_RenderText_Solid(ttf.font, g.text.c_str(), ttf.color);
+      ttf.textsurf = TTF_RenderText_Solid(ttf.font, ttf.text.c_str(), ttf.color);
       if (ttf.textsurf == NULL) {
         cerr << "TTF_RenderText_Solid() Failed: " << TTF_GetError() << endl;
       }else{
+        if (ttf.generated) SDL_FillRect(ttf.fmtsurf, 0, SDL_MapRGBA(ttf.fmtsurf->format, 0, 0, 0, 0)); // clear it
         SDL_BlitSurface(ttf.textsurf, 0, ttf.fmtsurf, 0);
 
 
         if (!ttf.generated) {
           glGenTextures(1, &(ttf.texture));
-          glBindTexture(GL_TEXTURE_2D, ttf.texture);
-          //  lod, internal format,                 border
-          //glTexImage2D(GL_TEXTURE_2D, 0, 4, ttf.textsurf->w, ttf.textsurf->h, 0,
-          //    GL_BGRA, GL_UNSIGNED_BYTE, ttf.textsurf->pixels);
-          glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-              GL_BGRA, GL_UNSIGNED_BYTE, ttf.fmtsurf->pixels);
+        }
 
+        glBindTexture(GL_TEXTURE_2D, ttf.texture);
+        //  lod, internal format,                 border
+        //glTexImage2D(GL_TEXTURE_2D, 0, 4, ttf.textsurf->w, ttf.textsurf->h, 0,
+        //    GL_BGRA, GL_UNSIGNED_BYTE, ttf.textsurf->pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+            GL_BGRA, GL_UNSIGNED_BYTE, ttf.fmtsurf->pixels);
+
+        if (!ttf.generated) {
           glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
           glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
           glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

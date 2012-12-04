@@ -53,6 +53,8 @@ class Servercontrol : public Controller {
 
     geo::Vector roundPos(geo::Vector);
 
+    std::string statusText;
+
   public:
     Servercontrol(); /**< Constructor. */
     ~Servercontrol(); /**< Destructor. */
