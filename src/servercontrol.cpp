@@ -314,7 +314,7 @@ void Servercontrol::physicsloop()
     player[i].input(keyset[i], level.getRot(), sync);
     player[i].move(level, sync);
     statusText = "Py: ";
-    ss << player[i].getY();
+    ss << player[i].getAccelY();
     statusText += ss.str();
 
     if (keyset[i] & KEYS_CONSTRUCT) {

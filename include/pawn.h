@@ -57,6 +57,7 @@ class Pawn {
     float getX() const;
     float getY() const;
     float getZ() const;
+    float getAccelY() const;
 };
 
 #endif
