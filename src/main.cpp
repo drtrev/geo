@@ -26,6 +26,7 @@
 #endif
 #include <iostream>
 #include "servercontrol.h"
+#include "botslopefall.h"
 
 using std::cout;
 using std::cerr;
@@ -59,8 +60,11 @@ void processCLAs(int argc, char** argv, Args &args)
   int c = 0;
 
   // returns EOF (-1) when reaches end of CLAs
-  while ((c = getopt_long(argc, argv, "dfhi:nqsv", options, &optionIndex)) != EOF) {
+  while ((c = getopt_long(argc, argv, "b:dfhi:nqsv", options, &optionIndex)) != EOF) {
     switch (c) {
+      case 'b':
+        args.bot = atoi(optarg);
+        break;
       case 'd': // don't grab keyboard
         args.dontGrab = true;
         break;
@@ -112,8 +116,10 @@ int main(int argc, char** argv)
 
   processCLAs(argc, argv, args);
 
-  if (!args.serv) controller = new Clientcontrol;
-  else controller = new Servercontrol;
+  if (!args.serv) {
+    if (args.bot == 0) controller = new Clientcontrol;
+    else controller = new Botslopefall;
+  }else controller = new Servercontrol;
   
   controller->init(args);
   controller->go();

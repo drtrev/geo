@@ -86,6 +86,7 @@ void Level::fillArray(BlockArray* blocks, int depth)
         // hack floor
         if (j == 0) block->state = BLOCK_SOLID;
         else{
+          if (block->state == BLOCK_SLOPE) block->state = BLOCK_SOLID;
           if (block->state == BLOCK_CHILDREN) {
             if (depth < maxdepth) {
               block->children = new BlockArray;
@@ -124,6 +125,82 @@ void Level::freeArray(BlockArray* blocks)
 
   delete blocks;
   testfree++;
+}
+
+int Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, int recurse)
+{
+  if (x < 0 || y < 0 || z < 0 ||
+      x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
+      z >= BLOCKARRAY_DEPTH)
+  {
+    // should only happen in top level
+    cout << "getBlock out" << endl;
+    return -1;
+  }else{
+    if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
+      if (scale < 0.2) {
+        cerr << "Error: detected another child at 0.1 level" << endl;
+        return 0;
+      }
+
+      if (!recurse) return blocks->b[x][y][z].state;
+      recurse--;
+
+      bool output = false;
+
+      // transform original x y and z to children's block coords
+      Vector torigin = parentorigin;
+      torigin.x += x * scale;
+      torigin.y += y * scale;
+      torigin.z += z * scale;
+
+      Vector tpos;
+      tpos.x = localpos.x - x * scale;
+      tpos.y = localpos.y - y * scale;
+      tpos.z = localpos.z - z * scale;
+      scale /= 10.0;
+
+      Vector blockpos = tpos / scale;
+
+      int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
+      tx = (int) blockpos.x, ty = (int) blockpos.y, tz = (int) blockpos.z;
+
+      if (output) cout << "tx: " << tx << ", ty: " << ty << ", tz: " << tz << endl;
+
+      // now we've got the transformed coords,
+      // are they actually within this big block?
+      // if not then it'll be detected as out of bounds
+
+      BlockArray* b2 = blocks->b[x][y][z].children;
+
+      return getBlock(tpos, torigin, tx, ty, tz, b2, scale, recurse);
+
+    }else
+      return blocks->b[x][y][z].state;
+
+  }
+
+  cerr << "Error: shouldn't get here" << endl;
+  return 0;
+}
+
+int Level::getBlock(Vector worldPos, int recurse)
+{
+  // find block we're in
+  // top level
+
+  Vector blockpos;
+  
+  blockpos = worldPos / 10;
+
+  int x, y, z;
+  x = (int) blockpos.x, y = (int) blockpos.y, z = (int) blockpos.z;
+
+  Vector origin;
+
+  int block = getBlock(worldPos, origin, x, y, z, top, 10, recurse);
+
+  return block; // not created
 }
 
 bool Level::createBlock(Vector worldPos)
@@ -348,7 +425,7 @@ void Level::addSlopedWalls(std::vector <Wall> &walls, Vector blockpos, float hal
   */
 }
 
-void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, float pawnRadius)
+void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, float pawnRadius, unsigned short int state)
 {
   float half = scale / 2.0;
   blockpos += half;
@@ -356,10 +433,11 @@ void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, fl
   half += pawnRadius; // expand walls by the radius of the object we're checking against
 
   // for small blocks:
-  if (scale > 0.09 && scale < 0.11) {
+  //if (scale > 0.09 && scale < 0.11) {
+  if (state == BLOCK_SLOPE) {
     addSlopedWalls(walls, blockpos, half);
     // top
-    Wall wall;
+    /*Wall wall;
     wall.corner1.x = blockpos.x - half;
     wall.corner1.y = blockpos.y + half;
     wall.corner1.z = blockpos.z + half;
@@ -389,7 +467,7 @@ void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, fl
     wall.corner4.y = blockpos.y - half;
     wall.corner4.z = blockpos.z + half;
     wall.normal.x = 0; wall.normal.y = -1; wall.normal.z = 0;
-    walls.push_back(wall);
+    walls.push_back(wall);*/
     //return;
   }else{
 
@@ -502,13 +580,13 @@ void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentor
   {
     //cerr << "collision out of bounds!" << endl;
   }else{
-    if (blocks->b[x][y][z].state == BLOCK_SOLID) {
+    if (blocks->b[x][y][z].state == BLOCK_SOLID || blocks->b[x][y][z].state == BLOCK_SLOPE) {
       // make walls
       Vector wallpos;
       wallpos.x = x * scale; wallpos.y = y * scale; wallpos.z = z * scale;
       wallpos += parentorigin;
       // TODO optimise this so it adds one long wall when blocks are adjacent
-      addWalls(walls, wallpos, scale, pawnRadius);
+      addWalls(walls, wallpos, scale, pawnRadius, blocks->b[x][y][z].state);
       //if (scale < 0.2) {
       //  cout << "Adding wall at: " << wallpos << ", radius: " << pawnRadius << endl;
       //}
@@ -883,7 +961,7 @@ int Level::checkCollisionSimple(Vector localpos, Vector parentorigin, int x, int
 
       return checkCollisionSimple(tpos, torigin, tx, ty, tz, b2, scale);
 
-    }else if (blocks->b[x][y][z].state == BLOCK_SOLID) {
+    }else if (blocks->b[x][y][z].state == BLOCK_SOLID || blocks->b[x][y][z].state == BLOCK_SLOPE) {
       cout << "HIT!" << endl;
       // create a child
       if (scale > 0.9) {

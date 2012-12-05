@@ -45,8 +45,9 @@ struct Args {
   bool fullscreen;
   bool graphicsActive;
   bool serv;
+  int bot;
 
-  Args() : port(3496), verbosity(VERBOSE_NORMAL), ip("127.0.0.1"), dontGrab(false), fullscreen(false), graphicsActive(true), serv(false) {}
+  Args() : port(3496), verbosity(VERBOSE_NORMAL), ip("127.0.0.1"), dontGrab(false), fullscreen(false), graphicsActive(true), serv(false), bot(0) {}
 };
 
 /**

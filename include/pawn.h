@@ -34,6 +34,7 @@ class Pawn {
     Pawn();
     ~Pawn();
 
+    void init(Outverbose &o);
     void init(Outverbose &o, Graphics &g);
 
     //virtual void draw() = 0;

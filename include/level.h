@@ -28,7 +28,7 @@
 namespace LevelNames {
   struct BlockArray;
 
-  enum BlockState { BLOCK_EMPTY, BLOCK_SOLID, BLOCK_CHILDREN };
+  enum BlockState { BLOCK_EMPTY, BLOCK_SOLID, BLOCK_SLOPE, BLOCK_CHILDREN };
 
   struct Block {
     unsigned short int state;
@@ -74,7 +74,7 @@ class Level : public Pawn {
 
   protected:
     void addSlopedWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float half);
-    void addWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float scale, float pawnRadius);
+    void addWalls(std::vector <LevelNames::Wall> &walls, geo::Vector blockpos, float scale, float pawnRadius, unsigned short int state);
     void getWalls(std::vector <LevelNames::Wall> &walls, geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z,
                   LevelNames::BlockArray *blocks, float scale, float pawnRadius);
     std::vector <LevelNames::Wall> getWalls(Props &props);
@@ -83,6 +83,7 @@ class Level : public Pawn {
                        bool limitToWall = true);
 
     int checkCollisionSimple(geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z, LevelNames::BlockArray *blocks, float scale);
+    int getBlock(geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z, LevelNames::BlockArray *blocks, float scale, int recurse);
 
   public:
     Level(); /**< Constructor. */
@@ -92,6 +93,8 @@ class Level : public Pawn {
     void freeArray(LevelNames::BlockArray*);
 
     bool createBlock(geo::Vector playerPos);
+
+    int getBlock(geo::Vector worldPos, int recurse);
 
     void draw(geo::Vector playerpos, geo::Vector playerrot, Bullet* bullet); /**< Render the map. \param thumb set to true if this is the thumbnail view, false otherwise. */
 

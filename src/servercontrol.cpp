@@ -225,6 +225,7 @@ void Servercontrol::networkloop()
   if (server.checkNewConnections(net)) {
     if (users < MAX_CLIENTS) {
       users++;
+      // TODO don't send out player positions to bots that don't need it
       sendStatus(users - 1); // id of new client
       out << VERBOSE_NORMAL << "New user added. Total number of users: " << users << "\n";
     }else out << VERBOSE_LOUD << "Error, logon received but too many clients connected!\n";
@@ -255,6 +256,7 @@ void Servercontrol::networkloop()
   //if (elapsed.tv_sec > 0 || elapsed.tv_usec > 33333) { // was 50000 -- eh, usec not big enough here??
     //lastSent = timer.getCurrent();
 
+    // TODO not to bots
     // send map position
     for (int i = 0; i < players; i++) { // need to hack for powerwall -- ID is same as array element fortunately
       if (fabs(player[i].getX() - oldposition[i].x) > 0.001 || fabs(player[i].getY() - oldposition[i].y) > 0.001
@@ -310,7 +312,7 @@ geo::Vector Servercontrol::roundPos(geo::Vector pos)
 void Servercontrol::physicsloop()
 {
   std::ostringstream ss;
-  for (int i = 0; i < users; i++) {
+  for (int i = 1; i < users; i++) { // TODO this is a hack to avoid bots, i.e. start from i = 1
     player[i].input(keyset[i], level.getRot(), sync);
     player[i].move(level, sync);
     statusText = "Py: ";

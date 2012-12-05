@@ -67,6 +67,11 @@ void Pawn::init(Outverbose &o, Graphics &g)
   graphics = &g;
 }
 
+void Pawn::init(Outverbose &o)
+{
+  out = &o;
+}
+
 /*void Pawn::draw()
 {
   //graphics->drawBlocks(blocks, x, y, zoom);
