@@ -344,8 +344,8 @@ void Level::addSlopedWalls(std::vector <Wall> &walls, Vector blockpos, float hal
   wall.corner4.y = blockpos.y + half;
   wall.corner4.z = blockpos.z - half;
   wall.normal.x = -oneoverroot2; wall.normal.y = oneoverroot2; wall.normal.z = 0;
-  walls.push_back(wall);*/
-
+  walls.push_back(wall);
+  */
 }
 
 void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, float pawnRadius)
@@ -356,7 +356,7 @@ void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, fl
   half += pawnRadius; // expand walls by the radius of the object we're checking against
 
   // for small blocks:
-  /*//if (scale > 0.09 && scale < 0.11) {
+  if (scale > 0.09 && scale < 0.11) {
     addSlopedWalls(walls, blockpos, half);
     // top
     Wall wall;
@@ -390,105 +390,106 @@ void Level::addWalls(std::vector <Wall> &walls, Vector blockpos, float scale, fl
     wall.corner4.z = blockpos.z + half;
     wall.normal.x = 0; wall.normal.y = -1; wall.normal.z = 0;
     walls.push_back(wall);
-    return;
-  //}*/
+    //return;
+  }else{
 
-  // front
-  Wall wall;
-  wall.corner1.x = blockpos.x - half;
-  wall.corner1.y = blockpos.y - half;
-  wall.corner1.z = blockpos.z + half;
-  wall.corner2.x = blockpos.x + half;
-  wall.corner2.y = blockpos.y - half;
-  wall.corner2.z = blockpos.z + half;
-  wall.corner3.x = blockpos.x + half;
-  wall.corner3.y = blockpos.y + half;
-  wall.corner3.z = blockpos.z + half;
-  wall.corner4.x = blockpos.x - half;
-  wall.corner4.y = blockpos.y + half;
-  wall.corner4.z = blockpos.z + half;
-  wall.normal.x = 0; wall.normal.y = 0; wall.normal.z = 1;
-  walls.push_back(wall);
+    // front
+    Wall wall;
+    wall.corner1.x = blockpos.x - half;
+    wall.corner1.y = blockpos.y - half;
+    wall.corner1.z = blockpos.z + half;
+    wall.corner2.x = blockpos.x + half;
+    wall.corner2.y = blockpos.y - half;
+    wall.corner2.z = blockpos.z + half;
+    wall.corner3.x = blockpos.x + half;
+    wall.corner3.y = blockpos.y + half;
+    wall.corner3.z = blockpos.z + half;
+    wall.corner4.x = blockpos.x - half;
+    wall.corner4.y = blockpos.y + half;
+    wall.corner4.z = blockpos.z + half;
+    wall.normal.x = 0; wall.normal.y = 0; wall.normal.z = 1;
+    walls.push_back(wall);
 
-  // right
-  wall.corner1.x = blockpos.x + half;
-  wall.corner1.y = blockpos.y - half;
-  wall.corner1.z = blockpos.z + half;
-  wall.corner2.x = blockpos.x + half;
-  wall.corner2.y = blockpos.y - half;
-  wall.corner2.z = blockpos.z - half;
-  wall.corner3.x = blockpos.x + half;
-  wall.corner3.y = blockpos.y + half;
-  wall.corner3.z = blockpos.z - half;
-  wall.corner4.x = blockpos.x + half;
-  wall.corner4.y = blockpos.y + half;
-  wall.corner4.z = blockpos.z + half;
-  wall.normal.x = 1; wall.normal.y = 0; wall.normal.z = 0;
-  walls.push_back(wall);
+    // right
+    wall.corner1.x = blockpos.x + half;
+    wall.corner1.y = blockpos.y - half;
+    wall.corner1.z = blockpos.z + half;
+    wall.corner2.x = blockpos.x + half;
+    wall.corner2.y = blockpos.y - half;
+    wall.corner2.z = blockpos.z - half;
+    wall.corner3.x = blockpos.x + half;
+    wall.corner3.y = blockpos.y + half;
+    wall.corner3.z = blockpos.z - half;
+    wall.corner4.x = blockpos.x + half;
+    wall.corner4.y = blockpos.y + half;
+    wall.corner4.z = blockpos.z + half;
+    wall.normal.x = 1; wall.normal.y = 0; wall.normal.z = 0;
+    walls.push_back(wall);
 
-  // back
-  wall.corner1.x = blockpos.x + half;
-  wall.corner1.y = blockpos.y - half;
-  wall.corner1.z = blockpos.z - half;
-  wall.corner2.x = blockpos.x - half;
-  wall.corner2.y = blockpos.y - half;
-  wall.corner2.z = blockpos.z - half;
-  wall.corner3.x = blockpos.x - half;
-  wall.corner3.y = blockpos.y + half;
-  wall.corner3.z = blockpos.z - half;
-  wall.corner4.x = blockpos.x + half;
-  wall.corner4.y = blockpos.y + half;
-  wall.corner4.z = blockpos.z - half;
-  wall.normal.x = 0; wall.normal.y = 0; wall.normal.z = -1;
-  walls.push_back(wall);
+    // back
+    wall.corner1.x = blockpos.x + half;
+    wall.corner1.y = blockpos.y - half;
+    wall.corner1.z = blockpos.z - half;
+    wall.corner2.x = blockpos.x - half;
+    wall.corner2.y = blockpos.y - half;
+    wall.corner2.z = blockpos.z - half;
+    wall.corner3.x = blockpos.x - half;
+    wall.corner3.y = blockpos.y + half;
+    wall.corner3.z = blockpos.z - half;
+    wall.corner4.x = blockpos.x + half;
+    wall.corner4.y = blockpos.y + half;
+    wall.corner4.z = blockpos.z - half;
+    wall.normal.x = 0; wall.normal.y = 0; wall.normal.z = -1;
+    walls.push_back(wall);
 
-  // left
-  wall.corner1.x = blockpos.x - half;
-  wall.corner1.y = blockpos.y - half;
-  wall.corner1.z = blockpos.z - half;
-  wall.corner2.x = blockpos.x - half;
-  wall.corner2.y = blockpos.y - half;
-  wall.corner2.z = blockpos.z + half;
-  wall.corner3.x = blockpos.x - half;
-  wall.corner3.y = blockpos.y + half;
-  wall.corner3.z = blockpos.z + half;
-  wall.corner4.x = blockpos.x - half;
-  wall.corner4.y = blockpos.y + half;
-  wall.corner4.z = blockpos.z - half;
-  wall.normal.x = -1; wall.normal.y = 0; wall.normal.z = 0;
-  walls.push_back(wall);
+    // left
+    wall.corner1.x = blockpos.x - half;
+    wall.corner1.y = blockpos.y - half;
+    wall.corner1.z = blockpos.z - half;
+    wall.corner2.x = blockpos.x - half;
+    wall.corner2.y = blockpos.y - half;
+    wall.corner2.z = blockpos.z + half;
+    wall.corner3.x = blockpos.x - half;
+    wall.corner3.y = blockpos.y + half;
+    wall.corner3.z = blockpos.z + half;
+    wall.corner4.x = blockpos.x - half;
+    wall.corner4.y = blockpos.y + half;
+    wall.corner4.z = blockpos.z - half;
+    wall.normal.x = -1; wall.normal.y = 0; wall.normal.z = 0;
+    walls.push_back(wall);
 
-  // top
-  wall.corner1.x = blockpos.x - half;
-  wall.corner1.y = blockpos.y + half;
-  wall.corner1.z = blockpos.z + half;
-  wall.corner2.x = blockpos.x + half;
-  wall.corner2.y = blockpos.y + half;
-  wall.corner2.z = blockpos.z + half;
-  wall.corner3.x = blockpos.x + half;
-  wall.corner3.y = blockpos.y + half;
-  wall.corner3.z = blockpos.z - half;
-  wall.corner4.x = blockpos.x - half;
-  wall.corner4.y = blockpos.y + half;
-  wall.corner4.z = blockpos.z - half;
-  wall.normal.x = 0; wall.normal.y = 1; wall.normal.z = 0;
-  walls.push_back(wall);
+    // top
+    wall.corner1.x = blockpos.x - half;
+    wall.corner1.y = blockpos.y + half;
+    wall.corner1.z = blockpos.z + half;
+    wall.corner2.x = blockpos.x + half;
+    wall.corner2.y = blockpos.y + half;
+    wall.corner2.z = blockpos.z + half;
+    wall.corner3.x = blockpos.x + half;
+    wall.corner3.y = blockpos.y + half;
+    wall.corner3.z = blockpos.z - half;
+    wall.corner4.x = blockpos.x - half;
+    wall.corner4.y = blockpos.y + half;
+    wall.corner4.z = blockpos.z - half;
+    wall.normal.x = 0; wall.normal.y = 1; wall.normal.z = 0;
+    walls.push_back(wall);
 
-  // bottom
-  wall.corner1.x = blockpos.x - half;
-  wall.corner1.y = blockpos.y - half;
-  wall.corner1.z = blockpos.z - half;
-  wall.corner2.x = blockpos.x + half;
-  wall.corner2.y = blockpos.y - half;
-  wall.corner2.z = blockpos.z - half;
-  wall.corner3.x = blockpos.x + half;
-  wall.corner3.y = blockpos.y - half;
-  wall.corner3.z = blockpos.z + half;
-  wall.corner4.x = blockpos.x - half;
-  wall.corner4.y = blockpos.y - half;
-  wall.corner4.z = blockpos.z + half;
-  wall.normal.x = 0; wall.normal.y = -1; wall.normal.z = 0;
-  walls.push_back(wall);
+    // bottom
+    wall.corner1.x = blockpos.x - half;
+    wall.corner1.y = blockpos.y - half;
+    wall.corner1.z = blockpos.z - half;
+    wall.corner2.x = blockpos.x + half;
+    wall.corner2.y = blockpos.y - half;
+    wall.corner2.z = blockpos.z - half;
+    wall.corner3.x = blockpos.x + half;
+    wall.corner3.y = blockpos.y - half;
+    wall.corner3.z = blockpos.z + half;
+    wall.corner4.x = blockpos.x - half;
+    wall.corner4.y = blockpos.y - half;
+    wall.corner4.z = blockpos.z + half;
+    wall.normal.x = 0; wall.normal.y = -1; wall.normal.z = 0;
+    walls.push_back(wall);
+  }
 }
 
 void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, float pawnRadius)
