@@ -11,12 +11,13 @@ class Botslopefall : public Bot {
       int scale;
     } check10, check1, check01;
     float currentScale;
+    geo::Vector limit;
 
   public:
     Botslopefall();
     void go();
     void checkNextBlock();
-    void incBlock(Check &check);
+    bool incBlock(Check &check);
 };
 
 #endif
