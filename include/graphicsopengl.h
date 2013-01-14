@@ -121,7 +121,7 @@ class GraphicsOpenGL : public Graphics {
 
     void drawMap(std::vector < std::vector < std::vector <double> > > &linestrip, std::vector <MapPolygon> &polygon, double scale, double offsetX, double offsetY);
 
-    void drawBlock(int x, int y, int z, float scale);
+    void drawBlock(int x, int y, int z, float scale, bool sloped=false);
     void drawBlocks(LevelNames::BlockArray*, float scale);
     void drawWall(LevelNames::Wall& wall);
     void drawBullet(geo::Vector bulletpos);

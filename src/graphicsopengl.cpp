@@ -472,12 +472,14 @@ void GraphicsOpenGL::drawMap(std::vector < std::vector < std::vector <double> > 
   glPopMatrix();
 }
 
-void GraphicsOpenGL::drawBlock(int x, int y, int z, float scale)
+void GraphicsOpenGL::drawBlock(int x, int y, int z, float scale, bool sloped)
 {
   glPushMatrix();
   if (scale > 9) glColor4f(0.7, .7, .7, 1);
   else if (scale > 0.5) glColor4f(0, .7, 0, 1);
   else glColor4f(0, 0, 0.7, 1);
+
+  if (sloped) glColor4f(0.5, 0.8, 0.2, 1);
 
   //if (scale < 0.2) { // temp hack to hide small blocks to see collision walls
 
@@ -537,7 +539,7 @@ void GraphicsOpenGL::drawBlocks(LevelNames::BlockArray *blocks, float scale)
     for (int j = 0; j < BLOCKARRAY_HEIGHT; ++j) {
       for (int k = 0; k < BLOCKARRAY_DEPTH; ++k) {
         if (blocks->b[i][j][k].state == LevelNames::BLOCK_SOLID || blocks->b[i][j][k].state == LevelNames::BLOCK_SLOPE) {
-          drawBlock(i, j, k, scale);
+          drawBlock(i, j, k, scale, blocks->b[i][j][k].state == LevelNames::BLOCK_SLOPE);
         }
         if (blocks->b[i][j][k].state == LevelNames::BLOCK_CHILDREN) {
           glPopMatrix(); // rescale from original

@@ -14,6 +14,7 @@
 #define IDHACK_BULLETROT_MAX 400
 #define IDHACK_CREATE 400
 #define IDHACK_LEVELROT 401
+#define IDHACK_MAKESLOPE 402
 #define BULLETS_MAX 100 // should be consistent with IDHACKs above
 
 namespace geo {

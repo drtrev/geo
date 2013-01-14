@@ -41,7 +41,13 @@ void Botslopefall::checkNextBlock()
   else if (currentScale > 0.9) block = level.getBlock(check1.pos, 1);
   else{
     block = level.getBlock(check01.pos, 2);
-    cout << "HOOOoooooooooooo: " << block << endl;
+
+    if (block == BLOCK_SOLID) {
+      // for now, just make all small blocks slopes to see if it works
+      // TODO XXX working here, use IDHACK_MAKESLOPE and send to server.
+      // get server to receive it and send on to client
+      // get client to process it too!
+    }
   }
 
   if (check1.pos.x == 0 && check1.pos.y == 1 && check1.pos.z == 0) {
@@ -52,7 +58,7 @@ void Botslopefall::checkNextBlock()
     if (currentScale > 9.9) check1.pos = check10.pos;
     else if (currentScale > 0.9) check01.pos = check1.pos;
     currentScale /= 10.0; // go through smaller blocks
-    cout << "currentScale: " << currentScale << endl;
+    //cout << "currentScale: " << currentScale << endl;
   }else{
     bool scaledUp = false;
     if (currentScale > 9.9) scaledUp = incBlock(check10);
@@ -80,13 +86,13 @@ bool Botslopefall::incBlock(Check &check)
       check.pos.y += currentScale;
       if (check.pos.y >= limit.y * currentScale) {
         check.pos.y = 0;
-        cout << "completed cycle" << endl;
+        //cout << "completed cycle" << endl;
         if (currentScale > 9.9) {
           cout << "completed everything" << endl;
           currentScale = 10.0; // in case of rounding error
         }else{
           currentScale *= 10;
-          cout << "currentScale: " << currentScale << endl;
+          //cout << "currentScale: " << currentScale << endl;
           return true;
         }
       }
