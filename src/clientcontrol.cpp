@@ -227,6 +227,8 @@ void Clientcontrol::inputloop()
 
     net.addUnit(unit, client);
 
+    std::cout << "sent keys" << std::endl;
+
   }
 
   if (mousexrel != oldmousexrel || mouseyrel != oldmouseyrel) {

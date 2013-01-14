@@ -24,3 +24,8 @@ buffer was full - check this crazy bullet spawning method when moving.
 OK, made timer for bullets.
 
 Hey, try this: only make sloped wall if there's not a block above?
+
+
+
+
+currently there's a hack that only works if there's a bot running first (ID 0), see /hack in servercontrol.cpp

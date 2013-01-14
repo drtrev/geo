@@ -206,7 +206,7 @@ void Pawn::move(Level &level, double sync)
   // collision check
   level.checkCollision(props);
 
-  std::cout << props.accel.y << std::endl;
+  //std::cout << props.accel.y << std::endl;
 }
 
 void Pawn::turn(geo::Vector rot)

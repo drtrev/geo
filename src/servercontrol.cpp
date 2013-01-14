@@ -180,6 +180,7 @@ void Servercontrol::process(Unit unit)
       break;
     case UNIT_KEYS:
       if (unit.keys.id > -1 && unit.keys.id < users) {
+        std::cout << "received keys" << std::endl;
         keyset[unit.keys.id] = unit.keys.bits;
       }
       break;
@@ -315,9 +316,9 @@ void Servercontrol::physicsloop()
   for (int i = 1; i < users; i++) { // TODO this is a hack to avoid bots, i.e. start from i = 1
     player[i].input(keyset[i], level.getRot(), sync);
     player[i].move(level, sync);
-    statusText = "Py: ";
-    ss << player[i].getAccelY();
-    statusText += ss.str();
+    //statusText = "Py: ";
+    //ss << player[i].getAccelY();
+    //statusText += ss.str();
 
     if (keyset[i] & KEYS_CONSTRUCT) {
       if (level.createBlock(player[i].getPos())) {
@@ -435,7 +436,8 @@ void Servercontrol::physicsloop()
 void Servercontrol::graphicsloop()
 {
   graphics->drawStart();
-  level.draw(player[0].getPos(), player[0].getRot(), bullet);
+  if (users > 0) level.draw(player[1].getPos(), player[1].getRot(), bullet);
+  else level.draw(player[0].getPos(), player[0].getRot(), bullet);
   GraphicsInfo g = graphics->defaultInfo();
   g.text = statusText;
   graphics->drawText(g);

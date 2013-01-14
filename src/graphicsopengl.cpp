@@ -536,7 +536,7 @@ void GraphicsOpenGL::drawBlocks(LevelNames::BlockArray *blocks, float scale)
   for (int i = 0; i < BLOCKARRAY_WIDTH; ++i) {
     for (int j = 0; j < BLOCKARRAY_HEIGHT; ++j) {
       for (int k = 0; k < BLOCKARRAY_DEPTH; ++k) {
-        if (blocks->b[i][j][k].state == LevelNames::BLOCK_SOLID) {
+        if (blocks->b[i][j][k].state == LevelNames::BLOCK_SOLID || blocks->b[i][j][k].state == LevelNames::BLOCK_SLOPE) {
           drawBlock(i, j, k, scale);
         }
         if (blocks->b[i][j][k].state == LevelNames::BLOCK_CHILDREN) {

@@ -962,7 +962,8 @@ int Level::checkCollisionSimple(Vector localpos, Vector parentorigin, int x, int
       return checkCollisionSimple(tpos, torigin, tx, ty, tz, b2, scale);
 
     }else if (blocks->b[x][y][z].state == BLOCK_SOLID || blocks->b[x][y][z].state == BLOCK_SLOPE) {
-      cout << "HIT!" << endl;
+      if (blocks->b[x][y][z].state == BLOCK_SOLID) cout << "HIT solid!" << endl;
+      if (blocks->b[x][y][z].state == BLOCK_SLOPE) cout << "HIT slope!" << endl;
       // create a child
       if (scale > 0.9) {
         blocks->b[x][y][z].children = new BlockArray;
