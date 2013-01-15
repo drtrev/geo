@@ -14,6 +14,8 @@ class Botslopefall : public Bot {
     geo::Vector limitMax;
     geo::Vector limitSmall;
 
+    geo::Vector localToWorld();
+
   public:
     Botslopefall();
     void go();
