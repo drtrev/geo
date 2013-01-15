@@ -344,6 +344,19 @@ void Clientcontrol::process(Unit unit)
         geo::Vector pos(unit.position.x, unit.position.y, unit.position.z);
         level.setRot(pos);
 
+      }else if (unit.position.id == IDHACK_MAKESLOPE) {
+        geo::Vector temp(unit.position.x, unit.position.y, unit.position.z);
+        LevelNames::Block* block = level.getBlock(temp, 2);
+        if (block != NULL) {
+          std::cout << "MAKESLOPE: block state: ";
+          if (block->state == LevelNames::BLOCK_EMPTY) std::cout << "BLOCK_EMPTY";
+          else if (block->state == LevelNames::BLOCK_SOLID) std::cout << "BLOCK_SOLID";
+          else if (block->state == LevelNames::BLOCK_SLOPE) std::cout << "BLOCK_SLOPE";
+          else std::cout << block->state;
+          std::cout << std::endl;
+
+          block->state = LevelNames::BLOCK_SLOPE;
+        }else out << VERBOSE_LOUD << "Makeslope received but block not found\n";
       }else out << VERBOSE_LOUD << "Error with position ID - out of range: " << unit.position.id << "\n";
 
       // temporary output to see what's going on

@@ -127,7 +127,7 @@ void Level::freeArray(BlockArray* blocks)
   testfree++;
 }
 
-int Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, int recurse)
+Block* Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, int recurse)
 {
   if (x < 0 || y < 0 || z < 0 ||
       x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
@@ -135,15 +135,15 @@ int Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z, B
   {
     // should only happen in top level
     cout << "getBlock out" << endl;
-    return -1;
+    return NULL;
   }else{
     if (blocks->b[x][y][z].state == BLOCK_CHILDREN) {
       if (scale < 0.2) {
         cerr << "Error: detected another child at 0.1 level" << endl;
-        return 0;
+        return NULL;
       }
 
-      if (!recurse) return blocks->b[x][y][z].state;
+      if (!recurse) return &(blocks->b[x][y][z]);
       recurse--;
 
       bool output = false;
@@ -176,15 +176,15 @@ int Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z, B
       return getBlock(tpos, torigin, tx, ty, tz, b2, scale, recurse);
 
     }else
-      return blocks->b[x][y][z].state;
+      return &(blocks->b[x][y][z]);
 
   }
 
   cerr << "Error: shouldn't get here" << endl;
-  return 0;
+  return NULL;
 }
 
-int Level::getBlock(Vector worldPos, int recurse)
+Block* Level::getBlock(Vector worldPos, int recurse)
 {
   // find block we're in
   // top level
@@ -198,7 +198,7 @@ int Level::getBlock(Vector worldPos, int recurse)
 
   Vector origin;
 
-  int block = getBlock(worldPos, origin, x, y, z, top, 10, recurse);
+  Block* block = getBlock(worldPos, origin, x, y, z, top, 10, recurse);
 
   return block; // not created
 }

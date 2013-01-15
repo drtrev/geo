@@ -185,13 +185,29 @@ void Servercontrol::process(Unit unit)
       }
       break;
     case UNIT_POSITION:
-      // this should be only rotation here
+      // this should be rotation or makeslope here
       if (unit.position.id > IDHACK_PLAYERROT_MIN  - 1 && unit.position.id < IDHACK_PLAYERROT_MAX) {
         int id = unit.position.id - IDHACK_PLAYERROT_MIN;
         geo::Vector rot(unit.position.x, unit.position.y, unit.position.z);
         player[id].setRot(rot);
         net.addUnitAll(unit, server, id); // don't send back to source
         //std::cout << "Set player rot to: " << player[0].getRot() << std::endl;
+      }
+      if (unit.position.id == IDHACK_MAKESLOPE) {
+        // make slope and send out
+        geo::Vector temp(unit.position.x, unit.position.y, unit.position.z);
+        LevelNames::Block* block = level.getBlock(temp, 2);
+        if (block != NULL) {
+          std::cout << "MAKESLOPE: block state: ";
+          if (block->state == LevelNames::BLOCK_EMPTY) std::cout << "BLOCK_EMPTY";
+          else if (block->state == LevelNames::BLOCK_SOLID) std::cout << "BLOCK_SOLID";
+          else if (block->state == LevelNames::BLOCK_SLOPE) std::cout << "BLOCK_SLOPE";
+          else std::cout << block->state;
+          std::cout << std::endl;
+
+          block->state = LevelNames::BLOCK_SLOPE;
+          net.addUnitAll(unit, server, -1); // pass onto clients
+        }else out << VERBOSE_LOUD << "Makeslope received but block not found\n";
       }
       break;
     case UNIT_TRANSFER:

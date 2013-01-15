@@ -83,7 +83,7 @@ class Level : public Pawn {
                        bool limitToWall = true);
 
     int checkCollisionSimple(geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z, LevelNames::BlockArray *blocks, float scale);
-    int getBlock(geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z, LevelNames::BlockArray *blocks, float scale, int recurse);
+    LevelNames::Block* getBlock(geo::Vector localpos, geo::Vector parentorigin, int x, int y, int z, LevelNames::BlockArray *blocks, float scale, int recurse);
 
   public:
     Level(); /**< Constructor. */
@@ -94,7 +94,7 @@ class Level : public Pawn {
 
     bool createBlock(geo::Vector playerPos);
 
-    int getBlock(geo::Vector worldPos, int recurse);
+    LevelNames::Block* getBlock(geo::Vector worldPos, int recurse);
 
     void draw(geo::Vector playerpos, geo::Vector playerrot, Bullet* bullet); /**< Render the map. \param thumb set to true if this is the thumbnail view, false otherwise. */
 

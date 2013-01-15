@@ -13,14 +13,14 @@ Botslopefall::Botslopefall()
   currentScale = 10;
 
   // note that it must be < limit
-  limit.x = BLOCKARRAY_WIDTH;
-  limit.y = BLOCKARRAY_HEIGHT;
-  limit.z = BLOCKARRAY_DEPTH;
+  limitMax.x = BLOCKARRAY_WIDTH;
+  limitMax.y = BLOCKARRAY_HEIGHT;
+  limitMax.z = BLOCKARRAY_DEPTH;
 
   // make smaller limits
-  limit.y = 2;
-  limit.x = 2;
-  limit.z = 2;
+  limitSmall.x = 2;
+  limitSmall.y = 2;
+  limitSmall.z = 2;
 }
 
 void Botslopefall::go()
@@ -34,59 +34,81 @@ void Botslopefall::go()
 
 void Botslopefall::checkNextBlock()
 {
-  int block = 0;
+  Block* block;
 
   // if top or mid level then don't recurse
-  if (currentScale > 9.9) block = level.getBlock(check10.pos, 0);
-  else if (currentScale > 0.9) block = level.getBlock(check1.pos, 1);
+  if (currentScale > 9.9) block = level.getBlock(check10.pos * check1.scale, 0);
+  else if (currentScale > 0.9) block = level.getBlock(check10.pos + check1.pos * check1.scale, 1);
   else{
-    block = level.getBlock(check01.pos, 2);
+    block = level.getBlock(check10.pos + check1.pos * check1.scale + check01.pos * check1.scale, 2);
 
-    if (block == BLOCK_SOLID) {
+    if (block != NULL && block->state == BLOCK_SOLID) {
       // for now, just make all small blocks slopes to see if it works
-      // TODO XXX working here, use IDHACK_MAKESLOPE and send to server.
+      // Use IDHACK_MAKESLOPE and send to server.
       // get server to receive it and send on to client
       // get client to process it too!
+      
+      // TODO if this goes too fast then it will send makeslope twice. Currently server and client can handle this
+      cout << "Sending makeslope for: " << check01.pos.x << "," << check01.pos.y << "," << check01.pos.z << endl;
+      unit.flag = UNIT_POSITION;
+      unit.position.id = IDHACK_MAKESLOPE;
+      unit.position.x = check01.pos.x;
+      unit.position.y = check01.pos.y;
+      unit.position.z = check01.pos.z;
+
+      net.addUnit(unit, client);
     }
   }
 
-  if (check1.pos.x == 0 && check1.pos.y == 1 && check1.pos.z == 0) {
-    cout << "At 0, 1, 0: " << block << endl;
-  }
-
-  if (block == BLOCK_CHILDREN) {
-    if (currentScale > 9.9) check1.pos = check10.pos;
-    else if (currentScale > 0.9) check01.pos = check1.pos;
-    currentScale /= 10.0; // go through smaller blocks
-    //cout << "currentScale: " << currentScale << endl;
-  }else{
-    bool scaledUp = false;
-    if (currentScale > 9.9) scaledUp = incBlock(check10);
-    else if (currentScale > 9.9) scaledUp = incBlock(check1);
-    else scaledUp = incBlock(check01);
-
-    // if block cycle was complete and we've scaled up again, then we need to inc again
-    if (scaledUp) {
-      if (currentScale > 9.9) incBlock(check10);
-      else if (currentScale > 9.9) incBlock(check1);
-      else incBlock(check01);
+  if (block != NULL) {
+    if (check1.pos.x == 0 && check1.pos.y == 1 && check1.pos.z == 0) {
+      cout << "At 0, 1, 0: " << block << endl;
     }
+
+    if (block->state == BLOCK_CHILDREN) {
+      if (currentScale > 9.9) check1.pos = check10.pos;
+      else if (currentScale > 0.9) check01.pos = check1.pos;
+      currentScale /= 10.0; // go through smaller blocks
+      //cout << "currentScale: " << currentScale << endl;
+    }else{
+      // This is bad code, don't look
+      bool scaledUp = false;
+      if (currentScale > 9.9) scaledUp = incBlock(check10);
+      else if (currentScale > 9.9) scaledUp = incBlock(check1);
+      else scaledUp = incBlock(check01);
+
+      // if block cycle was complete and we've scaled up again, then we need to inc again
+      if (scaledUp) {
+        if (currentScale > 9.9) scaledUp = incBlock(check10);
+        else if (currentScale > 9.9) scaledUp = incBlock(check1);
+        else scaledUp = incBlock(check01);
+
+        if (scaledUp) {
+          if (currentScale > 9.9) scaledUp = incBlock(check10);
+          else if (currentScale > 9.9) scaledUp = incBlock(check1);
+          else scaledUp = incBlock(check01);
+        }
+      }
+    }
+
   }
 
 }
 
 bool Botslopefall::incBlock(Check &check)
 {
+  geo::Vector currentLimit = limitMax;
+  if (currentScale > 9.9) currentLimit = limitSmall;
+
   check.pos.x += currentScale;
-  if (check.pos.x >= limit.x * currentScale) { // we're in world coords
+  if (check.pos.x >= currentLimit.x * currentScale) { // we're in world coords
     check.pos.x = 0;
     check.pos.z += currentScale;
-    if (check.pos.z >= limit.z * currentScale) {
+    if (check.pos.z >= currentLimit.z * currentScale) {
       check.pos.z = 0;
       check.pos.y += currentScale;
-      if (check.pos.y >= limit.y * currentScale) {
+      if (check.pos.y >= currentLimit.y * currentScale) {
         check.pos.y = 0;
-        //cout << "completed cycle" << endl;
         if (currentScale > 9.9) {
           cout << "completed everything" << endl;
           currentScale = 10.0; // in case of rounding error

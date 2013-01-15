@@ -479,7 +479,10 @@ void GraphicsOpenGL::drawBlock(int x, int y, int z, float scale, bool sloped)
   else if (scale > 0.5) glColor4f(0, .7, 0, 1);
   else glColor4f(0, 0, 0.7, 1);
 
-  if (sloped) glColor4f(0.5, 0.8, 0.2, 1);
+  if (sloped) {
+    glColor4f(0.5, 0.8, 0.2, 1);
+    //cout << "Drawing sloped block!: " << x << "," << y << "," << z << endl;
+  }
 
   //if (scale < 0.2) { // temp hack to hide small blocks to see collision walls
 

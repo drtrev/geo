@@ -11,7 +11,8 @@ class Botslopefall : public Bot {
       int scale;
     } check10, check1, check01;
     float currentScale;
-    geo::Vector limit;
+    geo::Vector limitMax;
+    geo::Vector limitSmall;
 
   public:
     Botslopefall();
