@@ -21,6 +21,7 @@ Botslopefall::Botslopefall()
   limitSmall.x = 2;
   limitSmall.y = 2;
   limitSmall.z = 2;
+
 }
 
 void Botslopefall::go()
@@ -45,7 +46,7 @@ geo::Vector Botslopefall::localToWorld()
 
 void Botslopefall::checkNextBlock()
 {
-  Block* block;
+  Block* block = NULL;
 
   // if top or mid level then don't recurse
   if (currentScale > 9.9) block = level.getBlock(localToWorld(), 0);
@@ -62,12 +63,12 @@ void Botslopefall::checkNextBlock()
       // TODO if this goes too fast then it will send makeslope twice. Currently server and client can handle this
       // one idea is we could set it locally here then ignore message from server
       geo::Vector world = localToWorld();
-      cout << "Sending makeslope for: " << world << endl;
+      cout << "Sending makeslope for: " << world << " check01.pos: " << check01.pos << endl;
       unit.flag = UNIT_POSITION;
       unit.position.id = IDHACK_MAKESLOPE;
-      unit.position.x = check01.pos.x;
-      unit.position.y = check01.pos.y;
-      unit.position.z = check01.pos.z;
+      unit.position.x = world.x; //check01.pos.x;
+      unit.position.y = world.y; //check01.pos.y;
+      unit.position.z = world.z; //check01.pos.z;
 
       net.addUnit(unit, client);
     }

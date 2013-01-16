@@ -8,7 +8,7 @@ class Botslopefall : public Bot {
   private:
     struct Check {
       geo::Vector pos;
-      int scale;
+      float scale;
     } check10, check1, check01;
     float currentScale;
     geo::Vector limitMax;

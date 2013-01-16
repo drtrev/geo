@@ -19,6 +19,11 @@
 
 namespace geo {
 
+inline float roundToTenth(float f)
+{
+  return (float) (floor(f*10+0.5)/10);
+}
+
 struct Vector {
   float x;
   float y;
@@ -26,6 +31,11 @@ struct Vector {
 
   Vector() : x(0), y(0), z(0) {}
   Vector(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+
+  Vector roundToTenth()
+  {
+    return *this = Vector(geo::roundToTenth(x), geo::roundToTenth(y), geo::roundToTenth(z));
+  }
 
   // TODO make relevant params const, see TODO file!
   Vector operator+(Vector &v)

@@ -31,6 +31,7 @@
 #include "graphics.h"
 #include "input.h"
 #include <iostream>
+#include <iomanip>
 //#include "outverbose.h"
 //#include <string>
 #include <stdlib.h>
@@ -127,8 +128,11 @@ void Level::freeArray(BlockArray* blocks)
   testfree++;
 }
 
-Block* Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, int recurse)
+Block* Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z, BlockArray *blocks, float scale, int recurse, bool debug)
 {
+  if (debug) {
+    cout << "Debug: getBlock sub: localpos: " << std::setprecision(8) << localpos << ", parentorigin: " << parentorigin << " x,y,z: " << x << "," << y << "," << z << " scale: " << scale << ", recurse: " << recurse << endl;
+  }
   if (x < 0 || y < 0 || z < 0 ||
       x >= BLOCKARRAY_WIDTH || y >= BLOCKARRAY_HEIGHT ||
       z >= BLOCKARRAY_DEPTH)
@@ -147,6 +151,7 @@ Block* Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z
       recurse--;
 
       bool output = false;
+      if (debug) output = true;
 
       // transform original x y and z to children's block coords
       Vector torigin = parentorigin;
@@ -160,7 +165,16 @@ Block* Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z
       tpos.z = localpos.z - z * scale;
       scale /= 10.0;
 
+      // TODO read up on floating point numbers, round everything to 10th
+      // i.e. also in similar functions to getBlock!
+      // see float.cpp example: 10.2f - 10.0f gives 0.19999981
+      tpos.roundToTenth();
+
       Vector blockpos = tpos / scale;
+      if (debug) {
+        cout << "tpos: " << std::setprecision(8) << tpos << ", scale: " << scale << ", blockpos: " << blockpos << endl;
+        cout << "blockpos.y: " << std::setprecision(8) << blockpos.y << ", (int): " << ((int) blockpos.y) << endl;
+      }
 
       int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
       tx = (int) blockpos.x, ty = (int) blockpos.y, tz = (int) blockpos.z;
@@ -173,7 +187,7 @@ Block* Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z
 
       BlockArray* b2 = blocks->b[x][y][z].children;
 
-      return getBlock(tpos, torigin, tx, ty, tz, b2, scale, recurse);
+      return getBlock(tpos, torigin, tx, ty, tz, b2, scale, recurse, debug);
 
     }else
       return &(blocks->b[x][y][z]);
@@ -184,7 +198,7 @@ Block* Level::getBlock(Vector localpos, Vector parentorigin, int x, int y, int z
   return NULL;
 }
 
-Block* Level::getBlock(Vector worldPos, int recurse)
+Block* Level::getBlock(Vector worldPos, int recurse, bool debug)
 {
   // find block we're in
   // top level
@@ -196,9 +210,12 @@ Block* Level::getBlock(Vector worldPos, int recurse)
   int x, y, z;
   x = (int) blockpos.x, y = (int) blockpos.y, z = (int) blockpos.z;
 
+  if (debug) {
+    cout << "Debug: getBlock top: x: " << x << ", y: " << y << ", z: " << z << ", blockpos: " << blockpos << ", worldPos: " << worldPos << endl;
+  }
   Vector origin;
 
-  Block* block = getBlock(worldPos, origin, x, y, z, top, 10, recurse);
+  Block* block = getBlock(worldPos, origin, x, y, z, top, 10, recurse, debug);
 
   return block; // not created
 }
