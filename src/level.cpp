@@ -264,6 +264,7 @@ bool Level::createBlock(Vector worldPos)
       tpos.y = worldPos.y - y * scale;
       tpos.z = worldPos.z - z * scale;
       scale /= 10.0;
+      tpos.roundToTenth();
       Vector blockpos = tpos / scale;
 
       int tx, ty, tz; // transformed vars, so we can still use x, y and z (below)
@@ -624,6 +625,7 @@ void Level::getWalls(std::vector <Wall> &walls, Vector localpos, Vector parentor
       tpos.y = localpos.y - y * scale;
       tpos.z = localpos.z - z * scale;
       scale /= 10.0;
+      tpos.roundToTenth();
 
       Vector blockpos = tpos / scale;
 
@@ -962,6 +964,7 @@ int Level::checkCollisionSimple(Vector localpos, Vector parentorigin, int x, int
       tpos.y = localpos.y - y * scale;
       tpos.z = localpos.z - z * scale;
       scale /= 10.0;
+      tpos.roundToTenth();
 
       Vector blockpos = tpos / scale;
 
